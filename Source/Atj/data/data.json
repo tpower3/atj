@@ -1,0 +1,115 @@
+{
+    "npcs": [
+        "Larry",
+        "Mary"
+    ],
+    "objects": [
+        "Vase",
+        "Donut",
+        "Radio"
+    ],
+    "triggers": [
+        {
+            "name": "meet_at_donut",
+            "conditions": [
+                {
+                    "check": "npc_at_location",
+                    "npc": "Larry",
+                    "location": "Donut"
+                },
+                {
+                    "check": "npc_at_location",
+                    "npc": "Marry",
+                    "location": "Donut"
+                }
+            ],
+            "actions": [
+                "meet_at_donut_complete"
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "simulation_start": [
+                {
+                    "type": "bind_npc",
+                    "npc": "Larry",
+                    "routine": "radio_check_routine"
+                },
+                {
+                    "type": "bind_object",
+                    "npc": "Radio",
+                    "routine": "country"
+                }
+            ],
+            "respond_to_radio_country_music": [
+                {
+                    "type": "bind_npc",
+                    "npc": "Larry",
+                    "routine": "radio_check_routine"
+                }
+            ],
+            "respond_to_radio_pop_music": [
+                {
+                    "type": "bind_npc",
+                    "npc": "Larry",
+                    "routine": "go_to_donut_routine"
+                },
+                {
+                    "type": "bind_npc",
+                    "npc": "Marry",
+                    "routine": "go_to_donut_routine"
+                }
+            ],
+            "meet_at_donut_complete ": [
+                {
+                    "type": "objective",
+                    "objective_name": "meet_at_donut",
+                    "state": "complete"
+                }
+            ]
+        }
+    ],
+    "routines": [
+        {
+            "radio_check_routine": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "walk_to",
+                    "target": "Vase"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "30.0",
+                    "behavior": "walk_to",
+                    "target": "Radio"
+                },
+                {
+                    "type": "check",
+                    "sync_time": "10.0",
+                    "behavior": "check_state",
+                    "target": "Radio",
+                    "outcome": [
+                        {
+                            "state": "country",
+                            "action": "respond_to_radio_country_music"
+                        },
+                        {
+                            "state": "pop",
+                            "action": "respond_to_radio_pop_music"
+                        }
+                    ]
+                }
+            ],
+            "go_to_donut_routine": [
+                {
+                    "type": "behavior",
+                    "sync_time": "3.0",
+                    "behavior": "walk_to",
+                    "target": "Donut"
+                }
+            ]
+        }
+    ]
+}
