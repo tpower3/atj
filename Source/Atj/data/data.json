@@ -87,13 +87,13 @@
                 {
                     "type": "behavior",
                     "sync_time": "0.0",
-                    "behavior": "walk_to",
+                    "behavior": "move_to",
                     "target": "Vase"
                 },
                 {
                     "type": "behavior",
                     "sync_time": "30.0",
-                    "behavior": "walk_to",
+                    "behavior": "move_to",
                     "target": "Radio"
                 },
                 {
@@ -120,7 +120,7 @@
                 {
                     "type": "behavior",
                     "sync_time": "3.0",
-                    "behavior": "walk_to",
+                    "behavior": "move_to",
                     "target": "Donut"
                 }
             ]

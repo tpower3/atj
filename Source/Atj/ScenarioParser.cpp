@@ -10,6 +10,10 @@ AScenarioParser::AScenarioParser()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+FScenarioData AScenarioParser::GetScenarioData() const {
+	return _scenarioData;
+}
+
 TSharedRef<FSignal> AScenarioParser::ParseSignalBindNpc(const FJsonObject& signalObject)
 {
 	TSharedRef<FSignal_BindNpc> fSignal = MakeShared<FSignal_BindNpc>();
@@ -36,40 +40,23 @@ void AScenarioParser::BeginPlay()
 	FString dataPath = FPaths::GameSourceDir() + "Atj/data/data.json";
 	FString result;
 	FFileHelper::LoadFileToString(result, *dataPath);
-/*
-	FJsonData JsonData;
-	FJsonObjectConverter::JsonObjectStringToUStruct<FJsonData>(
-		result,
-		&JsonData,
-		0, 0);
-
-	FString foo0 = JsonData.foo;
-	FString barfoo0 = JsonData.bar_arr[0].barfoo;
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *barfoo0);
-	*/
 
 	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
 	TSharedRef< TJsonReader<> > JsonReader = TJsonReaderFactory<>::Create(result);
 
 	// Deserialize the JSON data
 
-	FSimulatorData simulatorData;
+	FScenarioData scenarioData;
 
 	if (FJsonSerializer::Deserialize(JsonReader, JsonObject) &&
 		JsonObject.IsValid())
 	{
-		/*FJsonObjectConverter::JsonObjectToUStruct<FJsonData>(
-			npcs,
-			&simulatorData.npcs,
-			0, 0);
-			*/
-
 		// Parse npcs
 		TArray<TSharedPtr<FJsonValue>> npcs = JsonObject->GetArrayField("npcs");
 		for (int32 i = 0; i < npcs.Num(); i++)
 		{
 			FString npc = npcs[i]->AsString();
-			simulatorData.npcs.Add(npc);
+			scenarioData.npcs.Add(npc);
 		};
 
 		// Parse objects
@@ -77,7 +64,7 @@ void AScenarioParser::BeginPlay()
 		for (int32 i = 0; i < objects.Num(); i++)
 		{
 			FString object = objects[i]->AsString();
-			simulatorData.objects.Add(object);
+			scenarioData.objects.Add(object);
 		};
 
 		// Parse triggers
@@ -108,7 +95,7 @@ void AScenarioParser::BeginPlay()
 			}
 
 			// Add data to struct
-			simulatorData.triggers.Add(triggerName, fTrigger);
+			scenarioData.triggers.Add(triggerName, fTrigger);
 		};
 
 		// Parse Actions
@@ -137,7 +124,7 @@ void AScenarioParser::BeginPlay()
 			}
 
 			// Add data to struct
-			simulatorData.actions.Add(actionName, fAction);
+			scenarioData.actions.Add(actionName, fAction);
 		}
 
 		// Parse Routines
@@ -162,22 +149,22 @@ void AScenarioParser::BeginPlay()
 			}
 
 			// Add data to struct
-			simulatorData.routines.Add(routineName, fRoutine);
+			scenarioData.routines.Add(routineName, fRoutine);
 		}
 
 		// Print serialized data
 		// Print Npcs
-		for (const auto& npc : simulatorData.npcs)
+		for (const auto& npc : scenarioData.npcs)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("NPC: %s"), *npc);
 		};
 		// Print Objects
-		for (const auto& object : simulatorData.objects)
+		for (const auto& object : scenarioData.objects)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Object: %s"), *object);
 		};
 		// Print Triggers
-		for (const auto& trigger : simulatorData.triggers)
+		for (const auto& trigger : scenarioData.triggers)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Trigger Name: %s"), *trigger.Key);
 			for (const auto& condition : trigger.Value.conditions) {
@@ -191,7 +178,7 @@ void AScenarioParser::BeginPlay()
 			}
 		};
 		// Print Actions
-		for (const auto& action : simulatorData.actions)
+		for (const auto& action : scenarioData.actions)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Action Name: %s"), *action.Key);
 			for (const auto signal : action.Value.signals) {
@@ -217,7 +204,7 @@ void AScenarioParser::BeginPlay()
 			}
 		};
 		// Print Routines
-		for (const auto& routine : simulatorData.routines)
+		for (const auto& routine : scenarioData.routines)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Routine Name: %s"), *routine.Key);
 			for (const auto& task : routine.Value.tasks) {
@@ -229,6 +216,8 @@ void AScenarioParser::BeginPlay()
 			}
 		};
 	};
+
+	_scenarioData = scenarioData;
 
 }
 

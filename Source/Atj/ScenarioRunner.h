@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ScenarioParser.h"
 #include "ScenarioRunner.generated.h"
 
 UCLASS()
@@ -22,5 +23,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Simulator")
+	void SetScenarioData(const FScenarioData& data);
 
 };

@@ -2,6 +2,7 @@
 
 
 #include "ScenarioRunner.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
 // Sets default values
 AScenarioRunner::AScenarioRunner()
@@ -25,3 +26,35 @@ void AScenarioRunner::Tick(float DeltaTime)
 
 }
 
+static FVector GetObjectMoveToLocation(FString targetName) {
+	// TODO
+	return FVector(0, 0, 0);
+}
+
+static void SignalNpcMoveToLocation(FString npcName, FVector location) {
+	// TODO
+	/*
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), Npc::StaticClass(), FoundActors);
+	for (auto* actor : FoundActors) {
+		if (actor->name != npcName) {
+			continue;
+		}
+		auto npcComponent = npc.getComponent<NpcComponent>();
+		npcComponent->MoveToLocation(location);
+	}
+	*/
+}
+
+void AScenarioRunner::SetScenarioData(const FScenarioData& data) {
+	// TODO: Implement this function
+
+	// Fake test implementation for now
+	const auto behavior = data.routines["radio_check_routine"].tasks[0].behavior;
+	if (behavior == "move_to") {
+		const auto target = data.routines["radio_check_routine"].tasks[0].target;
+
+		FVector location = GetObjectMoveToLocation(target);
+		SignalNpcMoveToLocation("Larry", location);
+	}
+}

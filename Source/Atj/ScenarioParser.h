@@ -9,30 +9,30 @@
 
 #include "ScenarioParser.generated.h"
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCondition
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		FString check;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		FString npc;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		FString location;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FTrigger
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		TArray<FCondition> conditions;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		TArray<FString> actions;
 };
 
@@ -42,40 +42,40 @@ enum SignalTypes {
 	ObjectSetState UMETA(DisplayName = "ObjectSetState")
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FSignal
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		TEnumAsByte<SignalTypes> type;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FSignal_BindNpc : public FSignal
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		FString npc;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		FString routine;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FSignal_ObjectSetState : public FSignal
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		FString object;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		FString state;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FAction
 {
 	GENERATED_USTRUCT_BODY()
@@ -85,51 +85,51 @@ struct FAction
 };
 
 // TODO Inherit multiple task types from FTask
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FTask
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		FString type;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		FString sync_time;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		FString behavior;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		FString target;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FRoutine
 {
 	GENERATED_USTRUCT_BODY()
 
-		UPROPERTY()
+		UPROPERTY(BlueprintReadWrite)
 		TArray<FTask> tasks;
 };
 
-USTRUCT()
-struct FSimulatorData
+USTRUCT(BlueprintType)
+struct FScenarioData
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		TArray<FString> npcs;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		TArray<FString> objects;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		TMap<FString, FTrigger> triggers;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		TMap<FString, FAction> actions;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		TMap<FString, FRoutine> routines;
 };
 
@@ -151,8 +151,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Simulator")
+		FScenarioData GetScenarioData() const;
+
 private:
 	TSharedRef<FSignal> ParseSignalBindNpc(const FJsonObject& signalObject);
 	TSharedRef<FSignal> ParseSignalObjectSetState(const FJsonObject& signalObject);
+
+	FScenarioData _scenarioData;
 
 };
