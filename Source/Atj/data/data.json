@@ -19,7 +19,7 @@
                 },
                 {
                     "check": "npc_at_location",
-                    "npc": "Marry",
+                    "npc": "Mary",
                     "location": "Donut"
                 }
             ],
@@ -30,7 +30,8 @@
     ],
     "actions": [
         {
-            "simulation_start": [
+            "name": "simulation_start",
+            "signals": [
                 {
                     "type": "bind_npc",
                     "npc": "Larry",
@@ -41,15 +42,21 @@
                     "npc": "Radio",
                     "routine": "country"
                 }
-            ],
-            "respond_to_radio_country_music": [
+            ]
+        },
+        {
+            "name": "respond_to_radio_country_music",
+            "signals": [
                 {
                     "type": "bind_npc",
                     "npc": "Larry",
                     "routine": "radio_check_routine"
                 }
-            ],
-            "respond_to_radio_pop_music": [
+            ]
+        },
+        {
+            "name": "respond_to_radio_pop_music",
+            "signals": [
                 {
                     "type": "bind_npc",
                     "npc": "Larry",
@@ -57,11 +64,14 @@
                 },
                 {
                     "type": "bind_npc",
-                    "npc": "Marry",
+                    "npc": "Mary",
                     "routine": "go_to_donut_routine"
                 }
-            ],
-            "meet_at_donut_complete ": [
+            ]
+        },
+        {
+            "name": "meet_at_donut_complete",
+            "signals ": [
                 {
                     "type": "objective",
                     "objective_name": "meet_at_donut",

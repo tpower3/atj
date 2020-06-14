@@ -73,11 +73,8 @@ void AScenarioParser::BeginPlay()
 			FTrigger fTrigger;
 
 			// Parse conditions
-			UE_LOG(LogTemp, Warning, TEXT("1"));
 			const auto conditions = triggerObject->GetArrayField("conditions");
-			UE_LOG(LogTemp, Warning, TEXT("2"));
 			for (const auto& condition : conditions) {
-				UE_LOG(LogTemp, Warning, TEXT("3"));
 				FCondition fCondition;
 				fCondition.check = condition->AsObject()->GetStringField("check");
 				fCondition.npc = condition->AsObject()->GetStringField("npc");
@@ -96,7 +93,29 @@ void AScenarioParser::BeginPlay()
 			simulatorData.triggers.Add(triggerName, fTrigger);
 		};
 
-		// TODO: Parse Actions
+		// Parse Actions
+		TArray<TSharedPtr<FJsonValue>> actions = JsonObject->GetArrayField("actions");
+		for (const auto action : actions)
+		{
+			auto actionObject = action->AsObject();
+			FString actionName = actionObject->GetStringField("name");
+			UE_LOG(LogTemp, Warning, TEXT("DEBUG Action: %s"), *(actionName));
+
+			FAction fAction;
+
+			// Parse signals
+			const auto signals = actionObject->GetArrayField("signals");
+			for (const auto& signal : signals) {
+				FSignal fSignal;
+				fSignal.type = signal->AsObject()->GetStringField("type");
+				fSignal.npc = signal->AsObject()->GetStringField("npc");
+				fSignal.routine = signal->AsObject()->GetStringField("routine");
+				fAction.signals.Add(fSignal);
+			}
+
+			// Add data to struct
+			simulatorData.actions.Add(actionName, fAction);
+		}
 		// TODO: Parse Routines
 
 		// Print serialized data
@@ -115,9 +134,20 @@ void AScenarioParser::BeginPlay()
 				UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Check: %s"), *(condition.check));
 				UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Npc: %s"), *(condition.npc));
 				UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Location: %s"), *(condition.location));
+				UE_LOG(LogTemp, Warning, TEXT("---"));
 			}
 			for (const auto& action : trigger.Value.actions) {
 				UE_LOG(LogTemp, Warning, TEXT("Trigger Action: %s"), *action);
+			}
+		};
+		for (const auto& action : simulatorData.actions)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Action Name: %s"), *action.Key);
+			for (const auto& signal : action.Value.signals) {
+				UE_LOG(LogTemp, Warning, TEXT("Action Signal Type: %s"), *(signal.type));
+				UE_LOG(LogTemp, Warning, TEXT("Action Signal Npc: %s"), *(signal.npc));
+				UE_LOG(LogTemp, Warning, TEXT("Action Signal Routine: %s"), *(signal.routine));
+				UE_LOG(LogTemp, Warning, TEXT("---"));
 			}
 		};
 	};

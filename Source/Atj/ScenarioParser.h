@@ -33,6 +33,31 @@ struct FTrigger
 		TArray<FString> actions;
 };
 
+// TODO Inherit multiple signal types from FSignal
+USTRUCT()
+struct FSignal
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+		FString type;
+
+	UPROPERTY()
+		FString npc;
+
+	UPROPERTY()
+		FString routine;
+};
+
+USTRUCT()
+struct FAction
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+		TArray<FSignal> signals;
+};
+
 USTRUCT()
 struct FSimulatorData
 {
@@ -46,6 +71,9 @@ struct FSimulatorData
 
 	UPROPERTY()
 		TMap<FString, FTrigger> triggers;
+
+	UPROPERTY()
+		TMap<FString, FAction> actions;
 };
 
 
