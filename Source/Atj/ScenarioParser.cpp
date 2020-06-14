@@ -10,6 +10,24 @@ AScenarioParser::AScenarioParser()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+TSharedRef<FSignal> AScenarioParser::ParseSignalBindNpc(const FJsonObject& signalObject)
+{
+	TSharedRef<FSignal_BindNpc> fSignal = MakeShared<FSignal_BindNpc>();
+	fSignal->type = SignalTypes::BindNpc;
+	fSignal->npc = signalObject.GetStringField("npc");
+	fSignal->routine = signalObject.GetStringField("routine");
+	return fSignal;
+}
+
+TSharedRef<FSignal> AScenarioParser::ParseSignalObjectSetState(const FJsonObject& signalObject)
+{
+	TSharedRef<FSignal_ObjectSetState> fSignal = MakeShared<FSignal_ObjectSetState>();
+	fSignal->type = SignalTypes::ObjectSetState;
+	fSignal->object = signalObject.GetStringField("object");
+	fSignal->state = signalObject.GetStringField("state");
+	return fSignal;
+}
+
 // Called when the game starts or when spawned
 void AScenarioParser::BeginPlay()
 {
@@ -106,27 +124,59 @@ void AScenarioParser::BeginPlay()
 			// Parse signals
 			const auto signals = actionObject->GetArrayField("signals");
 			for (const auto& signal : signals) {
-				FSignal fSignal;
-				fSignal.type = signal->AsObject()->GetStringField("type");
-				fSignal.npc = signal->AsObject()->GetStringField("npc");
-				fSignal.routine = signal->AsObject()->GetStringField("routine");
-				fAction.signals.Add(fSignal);
+				const auto signalObject = signal->AsObject();
+
+				const auto type = signalObject->GetStringField("type");
+				if (type == "bind_npc") {
+					TSharedRef<FSignal> fSignal = ParseSignalBindNpc(*signalObject);
+					fAction.signals.Add(fSignal);
+				} else if (type == "object_set_state") {
+					TSharedRef<FSignal> fSignal = ParseSignalObjectSetState(*signalObject);
+					fAction.signals.Add(fSignal);
+				}
 			}
 
 			// Add data to struct
 			simulatorData.actions.Add(actionName, fAction);
 		}
-		// TODO: Parse Routines
+
+		// Parse Routines
+		TArray<TSharedPtr<FJsonValue>> routines = JsonObject->GetArrayField("routines");
+		for (const auto routine : routines)
+		{
+			auto routineObject = routine->AsObject();
+			FString routineName = routineObject->GetStringField("name");
+			UE_LOG(LogTemp, Warning, TEXT("DEBUG Routine: %s"), *(routineName));
+
+			FRoutine fRoutine;
+
+			// Parse tasks
+			const auto tasks = routineObject->GetArrayField("tasks");
+			for (const auto& task : tasks) {
+				FTask fTask;
+				fTask.type = task->AsObject()->GetStringField("type");
+				fTask.sync_time = task->AsObject()->GetStringField("sync_time");
+				fTask.behavior = task->AsObject()->GetStringField("behavior");
+				fTask.target = task->AsObject()->GetStringField("target");
+				fRoutine.tasks.Add(fTask);
+			}
+
+			// Add data to struct
+			simulatorData.routines.Add(routineName, fRoutine);
+		}
 
 		// Print serialized data
+		// Print Npcs
 		for (const auto& npc : simulatorData.npcs)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("NPC: %s"), *npc);
 		};
+		// Print Objects
 		for (const auto& object : simulatorData.objects)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Object: %s"), *object);
 		};
+		// Print Triggers
 		for (const auto& trigger : simulatorData.triggers)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Trigger Name: %s"), *trigger.Key);
@@ -140,13 +190,41 @@ void AScenarioParser::BeginPlay()
 				UE_LOG(LogTemp, Warning, TEXT("Trigger Action: %s"), *action);
 			}
 		};
+		// Print Actions
 		for (const auto& action : simulatorData.actions)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Action Name: %s"), *action.Key);
-			for (const auto& signal : action.Value.signals) {
-				UE_LOG(LogTemp, Warning, TEXT("Action Signal Type: %s"), *(signal.type));
-				UE_LOG(LogTemp, Warning, TEXT("Action Signal Npc: %s"), *(signal.npc));
-				UE_LOG(LogTemp, Warning, TEXT("Action Signal Routine: %s"), *(signal.routine));
+			for (const auto signal : action.Value.signals) {
+				UE_LOG(LogTemp, Warning, TEXT("Action Signal Type: %s"), *(UEnum::GetValueAsString<SignalTypes>(signal->type)));
+				switch (signal->type) {
+				case SignalTypes::BindNpc:
+				{
+					const TSharedRef<FSignal_BindNpc> signalCast = StaticCastSharedRef<FSignal_BindNpc>(signal);
+					UE_LOG(LogTemp, Warning, TEXT("Action Signal Npc: %s"), *(signalCast->npc));
+					UE_LOG(LogTemp, Warning, TEXT("Action Signal Routine: %s"), *(signalCast->routine));
+					UE_LOG(LogTemp, Warning, TEXT("---"));
+				}
+					break;
+				case SignalTypes::ObjectSetState:
+				{
+					const TSharedRef<FSignal_ObjectSetState> signalCast = StaticCastSharedRef<FSignal_ObjectSetState>(signal);
+					UE_LOG(LogTemp, Warning, TEXT("Action Signal Object: %s"), *(signalCast->object));
+					UE_LOG(LogTemp, Warning, TEXT("Action Signal State: %s"), *(signalCast->state));
+					UE_LOG(LogTemp, Warning, TEXT("---"));
+				}
+					break;
+				}
+			}
+		};
+		// Print Routines
+		for (const auto& routine : simulatorData.routines)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Routine Name: %s"), *routine.Key);
+			for (const auto& task : routine.Value.tasks) {
+				UE_LOG(LogTemp, Warning, TEXT("Routine Task Type: %s"), *(task.type));
+				UE_LOG(LogTemp, Warning, TEXT("Routine Task Sync_Time: %s"), *(task.sync_time));
+				UE_LOG(LogTemp, Warning, TEXT("Routine Task Behavior: %s"), *(task.behavior));
+				UE_LOG(LogTemp, Warning, TEXT("Routine Task Target: %s"), *(task.target));
 				UE_LOG(LogTemp, Warning, TEXT("---"));
 			}
 		};

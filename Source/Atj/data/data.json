@@ -38,9 +38,9 @@
                     "routine": "radio_check_routine"
                 },
                 {
-                    "type": "bind_object",
-                    "npc": "Radio",
-                    "routine": "country"
+                    "type": "object_set_state",
+                    "object": "Radio",
+                    "state": "country"
                 }
             ]
         },
@@ -71,7 +71,7 @@
         },
         {
             "name": "meet_at_donut_complete",
-            "signals ": [
+            "signals": [
                 {
                     "type": "objective",
                     "objective_name": "meet_at_donut",
@@ -82,7 +82,8 @@
     ],
     "routines": [
         {
-            "radio_check_routine": [
+            "name": "radio_check_routine",
+            "tasks": [
                 {
                     "type": "behavior",
                     "sync_time": "0.0",
@@ -111,8 +112,11 @@
                         }
                     ]
                 }
-            ],
-            "go_to_donut_routine": [
+            ]
+        },
+        {
+            "name": "go_to_donut_routine",
+            "tasks": [
                 {
                     "type": "behavior",
                     "sync_time": "3.0",

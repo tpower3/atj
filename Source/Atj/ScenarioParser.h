@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+
+#include "Templates/SharedPointer.h"
+
 #include "ScenarioParser.generated.h"
 
 USTRUCT()
@@ -33,14 +36,25 @@ struct FTrigger
 		TArray<FString> actions;
 };
 
-// TODO Inherit multiple signal types from FSignal
+UENUM()
+enum SignalTypes {
+	BindNpc UMETA(DisplayName = "BindNpc"),
+	ObjectSetState UMETA(DisplayName = "ObjectSetState")
+};
+
 USTRUCT()
 struct FSignal
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY()
-		FString type;
+		TEnumAsByte<SignalTypes> type;
+};
+
+USTRUCT()
+struct FSignal_BindNpc : public FSignal
+{
+	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY()
 		FString npc;
@@ -50,12 +64,52 @@ struct FSignal
 };
 
 USTRUCT()
-struct FAction
+struct FSignal_ObjectSetState : public FSignal
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY()
-		TArray<FSignal> signals;
+		FString object;
+
+	UPROPERTY()
+		FString state;
+};
+
+USTRUCT()
+struct FAction
+{
+	GENERATED_USTRUCT_BODY()
+
+
+	TArray<TSharedRef<FSignal>> signals;
+};
+
+// TODO Inherit multiple task types from FTask
+USTRUCT()
+struct FTask
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+		FString type;
+
+	UPROPERTY()
+		FString sync_time;
+
+	UPROPERTY()
+		FString behavior;
+
+	UPROPERTY()
+		FString target;
+};
+
+USTRUCT()
+struct FRoutine
+{
+	GENERATED_USTRUCT_BODY()
+
+		UPROPERTY()
+		TArray<FTask> tasks;
 };
 
 USTRUCT()
@@ -74,6 +128,9 @@ struct FSimulatorData
 
 	UPROPERTY()
 		TMap<FString, FAction> actions;
+
+	UPROPERTY()
+		TMap<FString, FRoutine> routines;
 };
 
 
@@ -93,5 +150,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+private:
+	TSharedRef<FSignal> ParseSignalBindNpc(const FJsonObject& signalObject);
+	TSharedRef<FSignal> ParseSignalObjectSetState(const FJsonObject& signalObject);
 
 };
