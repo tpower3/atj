@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ScenarioParser.h"
+#include "ObjectActor.h"
+#include "NpcCharacter.h"
 #include "ScenarioRunner.generated.h"
 
 UCLASS()
@@ -27,4 +29,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Simulator")
 	void SetScenarioData(const FScenarioData& data);
 
+private:
+	void InitScene();
+	ANpcCharacter* FindNpcCharacter(const FString& npcName);
+	AObjectActor* FindObjectActor(const FString& objectName);
 };

@@ -4,6 +4,8 @@
 #include "ScenarioRunner.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
+#include "EngineUtils.h"
+
 // Sets default values
 AScenarioRunner::AScenarioRunner()
 {
@@ -16,7 +18,7 @@ AScenarioRunner::AScenarioRunner()
 void AScenarioRunner::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	InitScene();
 }
 
 // Called every frame
@@ -26,24 +28,39 @@ void AScenarioRunner::Tick(float DeltaTime)
 
 }
 
-static FVector GetObjectMoveToLocation(FString targetName) {
-	// TODO
-	return FVector(0, 0, 0);
+void AScenarioRunner::InitScene()
+{
+	for (TActorIterator<ANpcCharacter> It(GetWorld()); It; ++It)
+	{
+		It->Init();
+	}
+	for (TActorIterator<AObjectActor> It(GetWorld()); It; ++It)
+	{
+		It->Init();
+	}
+
 }
 
-static void SignalNpcMoveToLocation(FString npcName, FVector location) {
-	// TODO
-	/*
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), Npc::StaticClass(), FoundActors);
-	for (auto* actor : FoundActors) {
-		if (actor->name != npcName) {
-			continue;
+ANpcCharacter* AScenarioRunner::FindNpcCharacter(const FString& npcName) {
+	for (TActorIterator<ANpcCharacter> It(GetWorld()); It; ++It)
+	{
+		const auto name = It->GetName();
+		if (name == npcName) {
+			return *It;
 		}
-		auto npcComponent = npc.getComponent<NpcComponent>();
-		npcComponent->MoveToLocation(location);
 	}
-	*/
+	return nullptr;
+}
+
+AObjectActor* AScenarioRunner::FindObjectActor(const FString& objectName) {
+	for (TActorIterator<AObjectActor> It(GetWorld()); It; ++It)
+	{
+		const auto name = It->GetName();
+		if (name == objectName) {
+			return *It;
+		}
+	}
+	return nullptr;
 }
 
 void AScenarioRunner::SetScenarioData(const FScenarioData& data) {
@@ -54,7 +71,12 @@ void AScenarioRunner::SetScenarioData(const FScenarioData& data) {
 	if (behavior == "move_to") {
 		const auto target = data.routines["radio_check_routine"].tasks[0].target;
 
-		FVector location = GetObjectMoveToLocation(target);
-		SignalNpcMoveToLocation("Larry", location);
+		ANpcCharacter* npcCharacter = FindNpcCharacter("Larry");
+		if (!npcCharacter) {
+			return;
+		}
+
+		AObjectActor* targetActor = FindObjectActor(target);
+		npcCharacter->RoutineMoveTo(targetActor);
 	}
 }

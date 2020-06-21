@@ -32,10 +32,3 @@ void UnpcComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 	// ...
 }
-
-void UnpcComponent::MoveToLocation(const FVector& location) {
-	// TODO
-	//auto aiController = GetAiController();
-	//aiController.MoveToLocation(location);
-}
-
