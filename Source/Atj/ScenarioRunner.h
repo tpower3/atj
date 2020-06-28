@@ -9,6 +9,17 @@
 #include "NpcCharacter.h"
 #include "ScenarioRunner.generated.h"
 
+USTRUCT(BlueprintType)
+struct FNpcBindingData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	FRoutine routine;
+
+	float startTime;
+};
+
 UCLASS()
 class ATJ_API AScenarioRunner : public AActor
 {
@@ -31,6 +42,12 @@ public:
 
 private:
 	void InitScene();
-	ANpcCharacter* FindNpcCharacter(const FString& npcName);
-	AObjectActor* FindObjectActor(const FString& objectName);
+
+	void ProcessAction(const FScenarioData& scenarioData, const FAction& action, float startTime);
+	void ProcessNpcBindings(UWorld* world, const TMap<FString, FNpcBindingData>& npcBindings, float currentTime);
+
+	// Used to map NPCs to a routine
+	TMap<FString, FNpcBindingData> _npcBindings;
+
+	float _previousTickGameTime = 0.0;
 };

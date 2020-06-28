@@ -1,0 +1,42 @@
+{
+    "npcs": [
+        "Larry"
+    ],
+    "objects": [
+        "Vase",
+        "Radio"
+    ],
+    "triggers": [
+    ],
+    "actions": [
+        {
+            "name": "simulation_start",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "Larry",
+                    "routine": "walk_around_routine"
+                }
+            ]
+        }
+    ],
+    "routines": [
+        {
+            "name": "walk_around_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "1.0",
+                    "behavior": "move_to",
+                    "target": "Vase"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "3.0",
+                    "behavior": "move_to",
+                    "target": "Radio"
+                }
+            ]
+        }
+    ]
+}
