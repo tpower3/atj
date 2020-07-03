@@ -1,0 +1,312 @@
+{
+    "npcs": [
+        "juan",
+        "zak"
+    ],
+    "objects": [
+        "mens_bathroom_toilet_1", 
+        "mens_bathroom_sink_1",
+        "printer_1",
+        "bulletin_board_1",
+        "refrigerator_1",
+        "meeting_room_table_1",
+        "meeting_room_tv_1",
+        "meeting_room_chair_2",
+        "meeting_room_chair_3",
+        "hacky_sack_1",
+        "reception_desk_1",
+        "break_room_table_1",
+        "microwave_1",
+        "zaks_breakfast_1",
+        "zaks_desk_1",
+        "zaks_pc_1",
+        "crossword_puzzle_1"
+    ],
+    "triggers": [
+    ],
+    "actions": [
+        {
+            "name": "simulation_start",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "juan",
+                    "routine": "reception_desk_routine"
+                },
+                {
+                    "type": "bind_npc",
+                    "npc": "zak",
+                    "routine": "reception_desk_hacky_sack_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_juan_to_mens_bathroom_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "juan",
+                    "routine": "mens_bathroom_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_juan_to_printer_1_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "juan",
+                    "routine": "printer_1_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_juan_to_refrigerator_1_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "juan",
+                    "routine": "refrigerator_1_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_juan_to_meeting_room_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "juan",
+                    "routine": "meeting_room_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_zak_to_break_room_eat_breakfast_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "zak",
+                    "routine": "break_room_eat_breakfast_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_zak_to_zaks_desk_breakfast_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "zak",
+                    "routine": "zaks_desk_breakfast_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_zak_to_zak_move_to_bulletin_board_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "zak",
+                    "routine": "zak_move_to_bulletin_board_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_zak_to_take_crossword_puzzle_into_meeting_room_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "zak",
+                    "routine": "take_crossword_puzzle_into_meeting_room_routine"
+                }
+            ]
+        }
+    ],
+    "routines": [
+        {
+            "name": "reception_desk_routine",
+            "tasks": [
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.0",
+                    "action": "bind_juan_to_mens_bathroom_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "mens_bathroom_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "mens_bathroom_toilet_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "20.0",
+                    "behavior": "move_to",
+                    "target": "mens_bathroom_sink_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.0",
+                    "action": "bind_juan_to_printer_1_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "printer_1_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "printer_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "20.0",
+                    "behavior": "move_to",
+                    "target": "bulletin_board_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.0",
+                    "action": "bind_juan_to_refrigerator_1_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "refrigerator_1_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "refrigerator_1_routine"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "20.0",
+                    "action": "bind_juan_to_meeting_room_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "meeting_room_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "meeting_room_table_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "20.0",
+                    "behavior": "move_to",
+                    "target": "meeting_room_tv_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "20.0",
+                    "behavior": "move_to",
+                    "target": "meeting_room_chair_3"
+                }
+            ]
+        },
+        {
+            "name": "reception_desk_hacky_sack_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "reception_desk_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "40.0",
+                    "action": "bind_zak_to_break_room_eat_breakfast_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "break_room_eat_breakfast_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "break_room_table_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "20.0",
+                    "behavior": "move_to",
+                    "target": "refrigerator_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "20.0",
+                    "behavior": "move_to",
+                    "target": "microwave_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "30.0",
+                    "action": "bind_zak_to_zaks_desk_breakfast_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "zaks_desk_breakfast_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "zaks_desk_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "30.0",
+                    "action": "bind_zak_to_zak_move_to_bulletin_board_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "zak_move_to_bulletin_board_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "bulletin_board_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "10.0",
+                    "action": "bind_zak_to_take_crossword_puzzle_into_meeting_room_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "take_crossword_puzzle_into_meeting_room_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "reception_desk_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "10.0",
+                    "behavior": "move_to",
+                    "target": "meeting_room_chair_2"
+                }
+            ]
+        }
+    ]
+}
