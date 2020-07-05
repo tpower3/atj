@@ -1,26 +1,33 @@
 {
     "npcs": [
         "juan",
-        "zak"
+        "zak",
+        "sara"
     ],
     "objects": [
         "mens_bathroom_toilet_1", 
         "mens_bathroom_sink_1",
+        "ladys_bathroom_toilet_1",
         "printer_1",
         "bulletin_board_1",
         "refrigerator_1",
         "meeting_room_table_1",
         "meeting_room_tv_1",
+        "meeting_room_chair_1",
         "meeting_room_chair_2",
         "meeting_room_chair_3",
         "hacky_sack_1",
         "reception_desk_1",
+        "coffee_maker_1",
         "break_room_table_1",
+        "break_room_chair_1",
+        "break_room_sink_1",
         "microwave_1",
         "zaks_breakfast_1",
         "zaks_desk_1",
         "zaks_pc_1",
-        "crossword_puzzle_1"
+        "crossword_puzzle_1",
+        "saras_desk_1"
     ],
     "triggers": [
     ],
@@ -37,6 +44,11 @@
                     "type": "bind_npc",
                     "npc": "zak",
                     "routine": "reception_desk_hacky_sack_routine"
+                },
+                {
+                    "type": "bind_npc",
+                    "npc": "sara",
+                    "routine": "morning_coffee_break_room_sara_routine"
                 }
             ]
         },
@@ -117,6 +129,46 @@
                     "type": "bind_npc",
                     "npc": "zak",
                     "routine": "take_crossword_puzzle_into_meeting_room_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_sara_to_sara_morning_desk_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "sara",
+                    "routine": "sara_morning_desk_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_sara_to_sara_move_to_bulletin_board_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "sara",
+                    "routine": "sara_move_to_bulletin_board_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_sara_to_sara_cry_in_ladys_room_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "sara",
+                    "routine": "sara_cry_in_ladys_room_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_sara_to_sara_big_meeting_start_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "sara",
+                    "routine": "sara_big_meeting_start_routine"
                 }
             ]
         }
@@ -305,6 +357,93 @@
                     "sync_time": "10.0",
                     "behavior": "move_to",
                     "target": "meeting_room_chair_2"
+                }
+            ]
+        },
+        {
+            "name": "morning_coffee_break_room_sara_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "coffee_maker_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "30.0",
+                    "behavior": "move_to",
+                    "target": "break_room_chair_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "30.0",
+                    "behavior": "move_to",
+                    "target": "break_room_sink_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "30.0",
+                    "action": "bind_sara_to_sara_morning_desk_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "sara_morning_desk_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "saras_desk_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "50.0",
+                    "action": "bind_sara_to_sara_move_to_bulletin_board_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "sara_move_to_bulletin_board_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "bulletin_board_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "20.0",
+                    "action": "bind_sara_to_sara_cry_in_ladys_room_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "sara_cry_in_ladys_room_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "ladys_bathroom_toilet_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "30.0",
+                    "action": "bind_sara_to_sara_big_meeting_start_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "sara_big_meeting_start_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "meeting_room_chair_1"
                 }
             ]
         }
