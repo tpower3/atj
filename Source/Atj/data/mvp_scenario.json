@@ -1,5 +1,6 @@
 {
     "npcs": [
+        "player",
         "juan",
         "zak",
         "sara"
