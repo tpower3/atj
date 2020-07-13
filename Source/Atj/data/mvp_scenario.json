@@ -522,7 +522,7 @@
                 {
                     "type": "execute_action",
                     "sync_time": "20.0",
-                    "action": "bind_player_to_debug_player_move_to_zaks_desk_routine_action"
+                    "action": "bind_player_to_debug_player_move_to_zaks_desk_1_routine_action"
                 }
             ]
         },
