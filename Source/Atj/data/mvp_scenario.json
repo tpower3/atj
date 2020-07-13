@@ -27,7 +27,9 @@
         "zaks_desk_1",
         "zaks_pc_1",
         "crossword_puzzle_1",
-        "saras_desk_1"
+        "saras_desk_1",
+        "storage_cabinet_1",
+        "copier_1"
     ],
     "triggers": [
     ],
@@ -49,6 +51,11 @@
                     "type": "bind_npc",
                     "npc": "sara",
                     "routine": "morning_coffee_break_room_sara_routine"
+                },
+                {
+                    "type": "bind_npc",
+                    "npc": "player",
+                    "routine": "debug_player_move_to_refrigerator_routine"
                 }
             ]
         },
@@ -103,22 +110,22 @@
             ]
         },
         {
-            "name": "bind_zak_to_zaks_desk_breakfast_routine_action",
+            "name": "bind_zak_to_zaks_desk_1_breakfast_routine_action",
             "signals": [
                 {
                     "type": "bind_npc",
                     "npc": "zak",
-                    "routine": "zaks_desk_breakfast_routine"
+                    "routine": "zaks_desk_1_breakfast_routine"
                 }
             ]
         },
         {
-            "name": "bind_zak_to_zak_move_to_bulletin_board_routine_action",
+            "name": "bind_zak_to_zak_move_to_bulletin_board_1_routine_action",
             "signals": [
                 {
                     "type": "bind_npc",
                     "npc": "zak",
-                    "routine": "zak_move_to_bulletin_board_routine"
+                    "routine": "zak_move_to_bulletin_board_1_routine"
                 }
             ]
         },
@@ -143,12 +150,12 @@
             ]
         },
         {
-            "name": "bind_sara_to_sara_move_to_bulletin_board_routine_action",
+            "name": "bind_sara_to_sara_move_to_bulletin_board_1_routine_action",
             "signals": [
                 {
                     "type": "bind_npc",
                     "npc": "sara",
-                    "routine": "sara_move_to_bulletin_board_routine"
+                    "routine": "sara_move_to_bulletin_board_1_routine"
                 }
             ]
         },
@@ -169,6 +176,46 @@
                     "type": "bind_npc",
                     "npc": "sara",
                     "routine": "sara_big_meeting_start_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_player_to_debug_player_move_to_storage_cabinet_1_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "player",
+                    "routine": "debug_player_move_to_storage_cabinet_1_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_player_to_debug_player_move_to_zaks_desk_1_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "player",
+                    "routine": "debug_player_move_to_zaks_desk_1_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_player_to_debug_player_move_to_copier_1_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "player",
+                    "routine": "debug_player_move_to_copier_1_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_player_to_debug_player_move_to_bulletin_board_1_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "player",
+                    "routine": "debug_player_move_to_bulletin_board_1_routine"
                 }
             ]
         }
@@ -307,12 +354,12 @@
                 {
                     "type": "execute_action",
                     "sync_time": "30.0",
-                    "action": "bind_zak_to_zaks_desk_breakfast_routine_action"
+                    "action": "bind_zak_to_zaks_desk_1_breakfast_routine_action"
                 }
             ]
         },
         {
-            "name": "zaks_desk_breakfast_routine",
+            "name": "zaks_desk_1_breakfast_routine",
             "tasks": [
                 {
                     "type": "behavior",
@@ -323,12 +370,12 @@
                 {
                     "type": "execute_action",
                     "sync_time": "30.0",
-                    "action": "bind_zak_to_zak_move_to_bulletin_board_routine_action"
+                    "action": "bind_zak_to_zak_move_to_bulletin_board_1_routine_action"
                 }
             ]
         },
         {
-            "name": "zak_move_to_bulletin_board_routine",
+            "name": "zak_move_to_bulletin_board_1_routine",
             "tasks": [
                 {
                     "type": "behavior",
@@ -400,12 +447,12 @@
                 {
                     "type": "execute_action",
                     "sync_time": "50.0",
-                    "action": "bind_sara_to_sara_move_to_bulletin_board_routine_action"
+                    "action": "bind_sara_to_sara_move_to_bulletin_board_1_routine_action"
                 }
             ]
         },
         {
-            "name": "sara_move_to_bulletin_board_routine",
+            "name": "sara_move_to_bulletin_board_1_routine",
             "tasks": [
                 {
                     "type": "behavior",
@@ -444,6 +491,81 @@
                     "sync_time": "0.0",
                     "behavior": "move_to",
                     "target": "meeting_room_chair_1"
+                }
+            ]
+        },
+        {
+            "name": "debug_player_move_to_refrigerator_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "refrigerator_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "20.0",
+                    "action": "bind_player_to_debug_player_move_to_storage_cabinet_1_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "player_move_to_storage_cabinet_1_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "storage_cabinet_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "20.0",
+                    "action": "bind_player_to_debug_player_move_to_zaks_desk_1_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "debug_player_move_to_zaks_desk_1_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "zaks_desk_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "30.0",
+                    "action": "bind_player_to_debug_player_move_to_copier_1_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "debug_player_move_to_copier_1_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "copier_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "30.0",
+                    "action": "bind_player_to_debug_player_move_to_bulletin_board_1_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "debug_player_move_to_bulletin_board_1_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.0",
+                    "behavior": "move_to",
+                    "target": "bulletin_board_1"
                 }
             ]
         }
