@@ -110,6 +110,8 @@ struct FRoutine
 
 		UPROPERTY(BlueprintReadWrite)
 		TArray<FTask> tasks;
+
+	int currentTaskIdx = 0;
 };
 
 USTRUCT(BlueprintType)

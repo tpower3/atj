@@ -37,7 +37,7 @@ void AScenarioParser::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FString dataPath = FPaths::GameSourceDir() + "Atj/data/demo_scenario.json";
+	FString dataPath = FPaths::GameSourceDir() + "Atj/data/mvp_scenario.json";
 	FString result;
 	FFileHelper::LoadFileToString(result, *dataPath);
 

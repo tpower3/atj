@@ -44,7 +44,7 @@ private:
 	void InitScene();
 
 	void ProcessAction(const FScenarioData& scenarioData, const FAction& action, float startTime);
-	void ProcessNpcBindings(UWorld* world, const TMap<FString, FNpcBindingData>& npcBindings, float currentTime);
+	void ProcessNpcBindings(UWorld* world, TMap<FString, FNpcBindingData>& npcBindings, float currentTime);
 
 	// Used to map NPCs to a routine
 	TMap<FString, FNpcBindingData> _npcBindings;

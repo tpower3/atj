@@ -68,42 +68,53 @@ static AObjectActor* FindObjectActor(UWorld* world, const FString& objectName) {
 	return nullptr;
 }
 
-void AScenarioRunner::ProcessNpcBindings(UWorld* world, const TMap<FString, FNpcBindingData>& npcBindings, float currentTime) {
-	for (const auto& npcBinding : npcBindings) {
+void AScenarioRunner::ProcessNpcBindings(UWorld* world, TMap<FString, FNpcBindingData>& npcBindings, float currentTime) {
+	for (auto& npcBinding : npcBindings) {
 		const auto& npcName = npcBinding.Key;
-		const auto& npcBindingData = npcBinding.Value;
-		const FRoutine routine = npcBindingData.routine;
+		auto& npcBindingData = npcBinding.Value;
+		FRoutine& routine = npcBindingData.routine;
 		float startTime = npcBindingData.startTime;
 
+		// Get sync time of current task
+		int idx = 0;
+		float accumulatedSyncTime = 0.0;
 		for (const auto& task : routine.tasks) {
 			float syncTime;
 			FDefaultValueHelper::ParseFloat(task.sync_time, syncTime);
-			const bool isPastTaskSyncTime = (currentTime >= (startTime + syncTime));
-			const bool isPreviousTickBeforeSyncTime = ((_previousTickGameTime < (startTime + syncTime)));
+			accumulatedSyncTime += syncTime;
+			if (idx == routine.currentTaskIdx) {
+				break;
+			}
+			++idx;
+		}
+		const auto& task = routine.tasks[routine.currentTaskIdx];
 
-			if (isPreviousTickBeforeSyncTime && isPastTaskSyncTime) {
-				// This task is ready to be executed
-				// This method is not purly deterministic since the time between ticks can vary, and
-				// the task is only executed on a frame.
+		const bool isPastTaskSyncTime = (currentTime >= (startTime + accumulatedSyncTime));
+		const bool isPreviousTickBeforeSyncTime = ((_previousTickGameTime < (startTime + accumulatedSyncTime)));
 
-				const auto behavior = task.behavior;
-				// We only support "move_to" right now
-				if (behavior == "move_to") {
-					const auto targetName = task.target;
+		if (isPreviousTickBeforeSyncTime && isPastTaskSyncTime) {
+			routine.currentTaskIdx += 1;
+			// This task is ready to be executed
+			// This method is not purly deterministic since the time between ticks can vary, and
+			// the task is only executed on a frame.
 
-					ANpcCharacter* npcCharacter = FindNpcCharacter(world, npcName);
-					if (!npcCharacter) {
-						// TODO: Handle failed lookup
-						continue;
-					}
+			const auto behavior = task.behavior;
+			// We only support "move_to" right now
+			if (behavior == "move_to") {
+				const auto targetName = task.target;
 
-					AObjectActor* targetActor = FindObjectActor(world, targetName);
-					if (!targetActor) {
-						// TODO: Handle failed lookup
-						continue;
-					}
-					npcCharacter->RoutineMoveTo(targetActor);
+				ANpcCharacter* npcCharacter = FindNpcCharacter(world, npcName);
+				if (!npcCharacter) {
+					// TODO: Handle failed lookup
+					continue;
 				}
+
+				AObjectActor* targetActor = FindObjectActor(world, targetName);
+				if (!targetActor) {
+					// TODO: Handle failed lookup
+					continue;
+				}
+				npcCharacter->RoutineMoveTo(targetActor);
 			}
 		}
 	}
