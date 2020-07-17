@@ -30,7 +30,11 @@ void AScenarioRunner::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// TODO: Verify that DeltaTime is GameTime not WorldTime
-	ProcessNpcBindings(GetWorld(), _npcBindings, GetWorld()->GetTimeSeconds());
+	ProcessNpcBindings(GetWorld(), _scenarioData, _npcBindings, GetWorld()->GetTimeSeconds());
+	for (const auto& elem : _npcBindingsQueue) {
+		_npcBindings.Add(elem);
+	}
+	_npcBindingsQueue.Empty();
 }
 
 void AScenarioRunner::InitScene()
@@ -68,85 +72,106 @@ static AObjectActor* FindObjectActor(UWorld* world, const FString& objectName) {
 	return nullptr;
 }
 
-void AScenarioRunner::ProcessNpcBindings(UWorld* world, TMap<FString, FNpcBindingData>& npcBindings, float currentTime) {
-	for (auto& npcBinding : npcBindings) {
+void AScenarioRunner::ProcessNpcBindings(UWorld* world, const FScenarioData& scenarioData, const TMap<FString, FNpcBindingData>& npcBindings, float currentTime) {
+	for (const auto& npcBinding : npcBindings) {
 		const auto& npcName = npcBinding.Key;
-		auto& npcBindingData = npcBinding.Value;
-		FRoutine& routine = npcBindingData.routine;
+		const auto& npcBindingData = npcBinding.Value;
+		const FRoutine& routine = scenarioData.routines[npcBindingData.routineName];
 		float startTime = npcBindingData.startTime;
 
 		// Get sync time of current task
-		int idx = 0;
+		int currentTaskIdx = 0;
 		float accumulatedSyncTime = 0.0;
 		for (const auto& task : routine.tasks) {
 			float syncTime;
-			FDefaultValueHelper::ParseFloat(task.sync_time, syncTime);
+			FDefaultValueHelper::ParseFloat(task->sync_time, syncTime);
 			accumulatedSyncTime += syncTime;
-			if (idx == routine.currentTaskIdx) {
+			if ((_previousTickGameTime - startTime) <= accumulatedSyncTime) {
 				break;
 			}
-			++idx;
+			++currentTaskIdx;
 		}
-		const auto& task = routine.tasks[routine.currentTaskIdx];
 
-		const bool isPastTaskSyncTime = (currentTime >= (startTime + accumulatedSyncTime));
-		const bool isPreviousTickBeforeSyncTime = ((_previousTickGameTime < (startTime + accumulatedSyncTime)));
+		if (currentTaskIdx >= routine.tasks.Num()) {
+			continue;
+		}
+		const auto& task = routine.tasks[currentTaskIdx];
+
+		const bool isPastTaskSyncTime = (currentTime > (startTime + accumulatedSyncTime));
+		const bool isPreviousTickBeforeSyncTime = ((_previousTickGameTime <= (startTime + accumulatedSyncTime)));
 
 		if (isPreviousTickBeforeSyncTime && isPastTaskSyncTime) {
-			routine.currentTaskIdx += 1;
 			// This task is ready to be executed
 			// This method is not purly deterministic since the time between ticks can vary, and
 			// the task is only executed on a frame.
 
-			const auto behavior = task.behavior;
-			// We only support "move_to" right now
-			if (behavior == "move_to") {
-				const auto targetName = task.target;
+			switch (task->type) {
+			case TaskTypes::Behavior:
+			{
+				const TSharedRef<FTask_Behavior> taskBehavior = StaticCastSharedRef<FTask_Behavior>(task);
+				const auto behavior = taskBehavior->behavior;
+				// We only support "move_to" right now
+				if (behavior == "move_to") {
+					const auto targetName = taskBehavior->target;
 
-				ANpcCharacter* npcCharacter = FindNpcCharacter(world, npcName);
-				if (!npcCharacter) {
-					// TODO: Handle failed lookup
-					continue;
-				}
+					ANpcCharacter* npcCharacter = FindNpcCharacter(world, npcName);
+					if (!npcCharacter) {
+						// TODO: Handle failed lookup
+						UE_LOG(LogTemp, Warning, TEXT("Failed to find: %s"), *(npcName));
+						continue;
+					}
 
-				AObjectActor* targetActor = FindObjectActor(world, targetName);
-				if (!targetActor) {
-					// TODO: Handle failed lookup
-					continue;
+					AObjectActor* targetActor = FindObjectActor(world, targetName);
+					if (!targetActor) {
+						// TODO: Handle failed lookup
+						UE_LOG(LogTemp, Warning, TEXT("Failed to find: %s"), *(targetName));
+						continue;
+					}
+					npcCharacter->RoutineMoveTo(targetActor);
 				}
-				npcCharacter->RoutineMoveTo(targetActor);
+			}
+			break;
+			case TaskTypes::ExecuteAction:
+			{
+				const TSharedRef<FTask_ExecuteAction> taskExecuteAction = StaticCastSharedRef<FTask_ExecuteAction>(task);
+				ProcessAction(scenarioData, taskExecuteAction->action, GetWorld()->GetTimeSeconds());
+				break;
+			}
 			}
 		}
 	}
 	_previousTickGameTime = currentTime;
 }
 
-void AScenarioRunner::ProcessAction(const FScenarioData& scenarioData, const FAction& action, float startTime) {
+void AScenarioRunner::ProcessAction(const FScenarioData& scenarioData, FString actionName, float startTime) {
+	FAction action = scenarioData.actions[actionName];
 	for (const auto& signal : action.signals) {
 		switch (signal->type) {
 		case SignalTypes::BindNpc:
 		{
 			const TSharedRef<FSignal_BindNpc> signalBindNpc = StaticCastSharedRef<FSignal_BindNpc>(signal);
 			FString routineName = signalBindNpc->routine;
-			const FRoutine routine = scenarioData.routines[routineName];
 			FString npcName = signalBindNpc->npc;
 
 			// TODO: Data structure to hold all metadata
 			FNpcBindingData npcBindingData;
-			npcBindingData.routine = routine;
+			npcBindingData.routineName = routineName;
 			npcBindingData.startTime = startTime;
-			_npcBindings.Add(npcName, npcBindingData);
+
+			_npcBindingsQueue.Add(npcName, npcBindingData);
 		}
 			break;
 		default:
 			// TODO: Handle undefined type
+			UE_LOG(LogTemp, Warning, TEXT("undefined"));
 			break;
 		}
 	}
 }
 
 void AScenarioRunner::SetScenarioData(const FScenarioData& data) {
+	_scenarioData = data;
 	if (data.actions.Contains("simulation_start")) {
-		ProcessAction(data, data.actions["simulation_start"], GetWorld()->GetTimeSeconds());
+		ProcessAction(data, "simulation_start", GetWorld()->GetTimeSeconds());
 	}
 }

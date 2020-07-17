@@ -84,17 +84,28 @@ struct FAction
 	TArray<TSharedRef<FSignal>> signals;
 };
 
-// TODO Inherit multiple task types from FTask
+UENUM()
+enum TaskTypes {
+	Behavior UMETA(DisplayName = "Behavior"),
+	ExecuteAction UMETA(DisplayName = "ExecuteAction")
+};
+
 USTRUCT(BlueprintType)
 struct FTask
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(BlueprintReadWrite)
-		FString type;
+		TEnumAsByte<TaskTypes> type;
 
 	UPROPERTY(BlueprintReadWrite)
 		FString sync_time;
+};
+
+USTRUCT(BlueprintType)
+struct FTask_Behavior : public FTask
+{
+	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(BlueprintReadWrite)
 		FString behavior;
@@ -104,14 +115,20 @@ struct FTask
 };
 
 USTRUCT(BlueprintType)
+struct FTask_ExecuteAction : public FTask
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+		FString action;
+};
+
+USTRUCT(BlueprintType)
 struct FRoutine
 {
 	GENERATED_USTRUCT_BODY()
 
-		UPROPERTY(BlueprintReadWrite)
-		TArray<FTask> tasks;
-
-	int currentTaskIdx = 0;
+	TArray<TSharedRef<FTask>> tasks;
 };
 
 USTRUCT(BlueprintType)

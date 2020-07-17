@@ -15,7 +15,7 @@ struct FNpcBindingData
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(BlueprintReadWrite)
-	FRoutine routine;
+	FString routineName;
 
 	float startTime;
 };
@@ -43,11 +43,14 @@ public:
 private:
 	void InitScene();
 
-	void ProcessAction(const FScenarioData& scenarioData, const FAction& action, float startTime);
-	void ProcessNpcBindings(UWorld* world, TMap<FString, FNpcBindingData>& npcBindings, float currentTime);
+	void ProcessAction(const FScenarioData& scenarioData, FString actionName, float startTime);
+	void ProcessNpcBindings(UWorld* world, const FScenarioData& data, const TMap<FString, FNpcBindingData>& npcBindings, float currentTime);
+
+	FScenarioData _scenarioData;
 
 	// Used to map NPCs to a routine
 	TMap<FString, FNpcBindingData> _npcBindings;
+	TMap<FString, FNpcBindingData> _npcBindingsQueue;
 
 	float _previousTickGameTime = 0.0;
 };

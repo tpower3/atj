@@ -32,6 +32,25 @@ TSharedRef<FSignal> AScenarioParser::ParseSignalObjectSetState(const FJsonObject
 	return fSignal;
 }
 
+static TSharedRef<FTask> ParseTaskBehavior(const FJsonObject& taskObject)
+{
+	TSharedRef<FTask_Behavior> fTask = MakeShared<FTask_Behavior>();
+	fTask->type = TaskTypes::Behavior;
+	fTask->sync_time = taskObject.GetStringField("sync_time");
+	fTask->behavior = taskObject.GetStringField("behavior");
+	fTask->target = taskObject.GetStringField("target");
+	return fTask;
+}
+
+static TSharedRef<FTask> ParseTaskExecuteAction(const FJsonObject& taskObject)
+{
+	TSharedRef<FTask_ExecuteAction> fTask = MakeShared<FTask_ExecuteAction>();
+	fTask->type = TaskTypes::ExecuteAction;
+	fTask->sync_time = taskObject.GetStringField("sync_time");
+	fTask->action = taskObject.GetStringField("action");
+	return fTask;
+}
+
 // Called when the game starts or when spawned
 void AScenarioParser::BeginPlay()
 {
@@ -140,12 +159,17 @@ void AScenarioParser::BeginPlay()
 			// Parse tasks
 			const auto tasks = routineObject->GetArrayField("tasks");
 			for (const auto& task : tasks) {
-				FTask fTask;
-				fTask.type = task->AsObject()->GetStringField("type");
-				fTask.sync_time = task->AsObject()->GetStringField("sync_time");
-				fTask.behavior = task->AsObject()->GetStringField("behavior");
-				fTask.target = task->AsObject()->GetStringField("target");
-				fRoutine.tasks.Add(fTask);
+				auto taskObject = task->AsObject();
+
+				const auto type = taskObject->GetStringField("type");
+				if (type == "behavior") {
+					TSharedRef<FTask> fTask = ParseTaskBehavior(*taskObject);
+					fRoutine.tasks.Add(fTask);
+				}
+				else if (type == "execute_action") {
+					TSharedRef<FTask> fTask = ParseTaskExecuteAction(*taskObject);
+					fRoutine.tasks.Add(fTask);
+				}
 			}
 
 			// Add data to struct
@@ -208,11 +232,24 @@ void AScenarioParser::BeginPlay()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Routine Name: %s"), *routine.Key);
 			for (const auto& task : routine.Value.tasks) {
-				UE_LOG(LogTemp, Warning, TEXT("Routine Task Type: %s"), *(task.type));
-				UE_LOG(LogTemp, Warning, TEXT("Routine Task Sync_Time: %s"), *(task.sync_time));
-				UE_LOG(LogTemp, Warning, TEXT("Routine Task Behavior: %s"), *(task.behavior));
-				UE_LOG(LogTemp, Warning, TEXT("Routine Task Target: %s"), *(task.target));
+				UE_LOG(LogTemp, Warning, TEXT("Routine Task Type: %s"), *(UEnum::GetValueAsString<TaskTypes>(task->type)));
+				UE_LOG(LogTemp, Warning, TEXT("Routine Task Sync_Time: %s"), *(task->sync_time));
+				switch (task->type) {
+				case TaskTypes::Behavior:
+				{
+					const TSharedRef<FTask_Behavior> taskCast = StaticCastSharedRef<FTask_Behavior>(task);
+					UE_LOG(LogTemp, Warning, TEXT("Routine Task Behavior: %s"), *(taskCast->behavior));
+					UE_LOG(LogTemp, Warning, TEXT("Routine Task Target: %s"), *(taskCast->target));
+				}
+				break;
+				case TaskTypes::ExecuteAction:
+				{
+					const TSharedRef<FTask_ExecuteAction> taskCast = StaticCastSharedRef<FTask_ExecuteAction>(task);
+					UE_LOG(LogTemp, Warning, TEXT("Routine Task Action: %s"), *(taskCast->action));
+				}
+				break;
 				UE_LOG(LogTemp, Warning, TEXT("---"));
+				}
 			}
 		};
 	};
