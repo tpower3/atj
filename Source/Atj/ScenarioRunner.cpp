@@ -7,6 +7,9 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 
+#include "ItemActor.h"
+#include "ObjectActor.h"
+
 #include "EngineUtils.h"
 
 // Sets default values
@@ -72,6 +75,18 @@ static AObjectActor* FindObjectActor(UWorld* world, const FString& objectName) {
 	return nullptr;
 }
 
+static AItemActor* FindItemActor(UWorld* world, const FString& itemName) {
+	for (TActorIterator<AItemActor> It(world); It; ++It)
+	{
+		const auto name = It->GetName();
+		UE_LOG(LogTemp, Warning, TEXT("Consider: %s"), *(name));
+		if (name == itemName) {
+			return *It;
+		}
+	}
+	return nullptr;
+}
+
 void AScenarioRunner::ProcessNpcBindings(UWorld* world, const FScenarioData& scenarioData, const TMap<FString, FNpcBindingData>& npcBindings, float currentTime) {
 	for (const auto& npcBinding : npcBindings) {
 		const auto& npcName = npcBinding.Key;
@@ -110,24 +125,34 @@ void AScenarioRunner::ProcessNpcBindings(UWorld* world, const FScenarioData& sce
 			{
 				const TSharedRef<FTask_Behavior> taskBehavior = StaticCastSharedRef<FTask_Behavior>(task);
 				const auto behavior = taskBehavior->behavior;
-				// We only support "move_to" right now
+
+				ANpcCharacter* npcCharacter = FindNpcCharacter(world, npcName);
+				if (!npcCharacter) {
+					// TODO: Handle failed lookup
+					UE_LOG(LogTemp, Warning, TEXT("Failed to find: %s"), *(npcName));
+					continue;
+				}
+
 				if (behavior == "move_to") {
 					const auto targetName = taskBehavior->target;
-
-					ANpcCharacter* npcCharacter = FindNpcCharacter(world, npcName);
-					if (!npcCharacter) {
-						// TODO: Handle failed lookup
-						UE_LOG(LogTemp, Warning, TEXT("Failed to find: %s"), *(npcName));
-						continue;
-					}
 
 					AObjectActor* targetActor = FindObjectActor(world, targetName);
 					if (!targetActor) {
 						// TODO: Handle failed lookup
-						UE_LOG(LogTemp, Warning, TEXT("Failed to find: %s"), *(targetName));
+						UE_LOG(LogTemp, Warning, TEXT("Failed to find for 'move_to' behavior: %s"), *(targetName));
 						continue;
 					}
 					npcCharacter->RoutineMoveTo(targetActor);
+				}
+				else if (behavior == "pick_up") {
+					const auto targetName = taskBehavior->target;
+					AItemActor* targetActor = FindItemActor(world, targetName);
+					if (!targetActor) {
+						// TODO: Handle failed lookup
+						UE_LOG(LogTemp, Warning, TEXT("Failed to find for 'pick_up' behavior: %s"), *(targetName));
+						continue;
+					}
+					npcCharacter->PickUp(targetActor);
 				}
 			}
 			break;
