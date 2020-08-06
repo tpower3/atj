@@ -1,10 +1,13 @@
 {
     "npcs": [
-        "Larry"
+        "zak"
     ],
     "objects": [
-        "Vase",
-        "Radio"
+        "object_1",
+        "object_2"
+    ],
+    "items": [
+        "item_1"
     ],
     "triggers": [
     ],
@@ -14,7 +17,7 @@
             "signals": [
                 {
                     "type": "bind_npc",
-                    "npc": "Larry",
+                    "npc": "zak",
                     "routine": "walk_around_routine"
                 }
             ]
@@ -28,13 +31,19 @@
                     "type": "behavior",
                     "sync_time": "1.0",
                     "behavior": "move_to",
-                    "target": "Vase"
+                    "target": "object_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "1.0",
+                    "behavior": "pick_up",
+                    "target": "item_1"
                 },
                 {
                     "type": "behavior",
                     "sync_time": "3.0",
                     "behavior": "move_to",
-                    "target": "Radio"
+                    "target": "object_2"
                 }
             ]
         }

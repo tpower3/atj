@@ -39,6 +39,11 @@ void ANpcCharacter::Init_Implementation()
 
 }
 
+void ANpcCharacter::PickUp_Implementation(const AItemActor* item)
+{
+
+}
+
 
 FString ANpcCharacter::GetName() const {
 	return _name;

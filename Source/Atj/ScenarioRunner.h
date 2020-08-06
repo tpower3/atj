@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ScenarioParser.h"
-#include "ObjectActor.h"
 #include "NpcCharacter.h"
 #include "ScenarioRunner.generated.h"
 

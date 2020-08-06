@@ -7,6 +7,7 @@
 #include "NpcCharacter.generated.h"
 
 class AObjectActor;
+class AItemActor;
 
 UCLASS()
 class ATJ_API ANpcCharacter : public ACharacter
@@ -34,6 +35,9 @@ public:
 	void SetName(const FString& name);
 
 	void RoutineMoveTo(AObjectActor* objectActor);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Npc")
+		void PickUp(const AItemActor* item);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Npc")
 		void Init();
