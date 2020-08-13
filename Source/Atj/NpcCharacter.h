@@ -40,6 +40,9 @@ public:
 		void PickUp(const AItemActor* item);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Npc")
+		void PutDown(const AObjectActor* object);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Npc")
 		void Init();
 
 private:

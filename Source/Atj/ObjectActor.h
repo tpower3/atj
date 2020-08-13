@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "ObjectActor.generated.h"
 
+class AItemActor;
+
 UCLASS()
 class ATJ_API AObjectActor : public AActor
 {
@@ -35,6 +37,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Object")
 		void SetObjectInteractLocation(const FVector& location);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Object")
+		void AttachItemActor(const AItemActor* item);
 
 private:
 	FString _name;
