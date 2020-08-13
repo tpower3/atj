@@ -44,6 +44,11 @@ void ANpcCharacter::PickUp_Implementation(const AItemActor* item)
 
 }
 
+void ANpcCharacter::PutDown_Implementation(const AObjectActor* object)
+{
+
+}
+
 
 FString ANpcCharacter::GetName() const {
 	return _name;

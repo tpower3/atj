@@ -154,6 +154,16 @@ void AScenarioRunner::ProcessNpcBindings(UWorld* world, const FScenarioData& sce
 					}
 					npcCharacter->PickUp(targetActor);
 				}
+				else if (behavior == "put_down") {
+					const auto targetName = taskBehavior->target;
+					AObjectActor* targetActor = FindObjectActor(world, targetName);
+					if (!targetActor) {
+						// TODO: Handle failed lookup
+						UE_LOG(LogTemp, Warning, TEXT("Failed to find for 'put_down' behavior: %s"), *(targetName));
+						continue;
+					}
+					npcCharacter->PutDown(targetActor);
+				}
 			}
 			break;
 			case TaskTypes::ExecuteAction:

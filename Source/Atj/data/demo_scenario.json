@@ -1,10 +1,13 @@
 {
     "npcs": [
-        "zak"
+        "zak",
+        "sara"
     ],
     "objects": [
         "object_1",
-        "object_2"
+        "object_2",
+        "object_3",
+        "object_4"
     ],
     "items": [
         "item_1"
@@ -18,18 +21,43 @@
                 {
                     "type": "bind_npc",
                     "npc": "zak",
-                    "routine": "walk_around_routine"
+                    "routine": "zak_walk_around_routine"
+                },
+                {
+                    "type": "bind_npc",
+                    "npc": "sara",
+                    "routine": "sara_walk_around_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_zak_to_zak_walk_around_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "zak",
+                    "routine": "zak_walk_around_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_sara_to_sara_walk_around_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "sara",
+                    "routine": "sara_walk_around_routine"
                 }
             ]
         }
     ],
     "routines": [
         {
-            "name": "walk_around_routine",
+            "name": "zak_walk_around_routine",
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "1.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "object_1"
                 },
@@ -41,9 +69,66 @@
                 },
                 {
                     "type": "behavior",
+                    "sync_time": ".1",
+                    "behavior": "move_to",
+                    "target": "object_2"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "1.0",
+                    "behavior": "put_down",
+                    "target": "object_2"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "0.1",
+                    "behavior": "move_to",
+                    "target": "object_3"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "3.0",
+                    "action": "bind_zak_to_zak_walk_around_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "sara_walk_around_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
                     "sync_time": "3.0",
                     "behavior": "move_to",
                     "target": "object_2"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "1.0",
+                    "behavior": "pick_up",
+                    "target": "item_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "0.1",
+                    "behavior": "move_to",
+                    "target": "object_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "1.0",
+                    "behavior": "put_down",
+                    "target": "object_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "0.1",
+                    "behavior": "move_to",
+                    "target": "object_4"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.1",
+                    "action": "bind_sara_to_sara_walk_around_routine_action"
                 }
             ]
         }

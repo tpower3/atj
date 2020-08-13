@@ -45,3 +45,7 @@ FVector AObjectActor::GetObjectInteractLocation() const {
 void AObjectActor::SetObjectInteractLocation(const FVector& location) {
 	_interactLocation = location;
 }
+
+void AObjectActor::AttachItemActor_Implementation(const AItemActor* item) {
+
+}
