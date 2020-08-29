@@ -31,6 +31,9 @@
         "storage_cabinet_1",
         "copier_1"
     ],
+    "items": [
+        "crossword_puzzle_1"
+    ],
     "triggers": [
     ],
     "actions": [
@@ -224,6 +227,18 @@
         {
             "name": "reception_desk_routine",
             "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.01",
+                    "behavior": "pick_up",
+                    "target": "crossword_puzzle_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "50.0",
+                    "behavior": "put_down",
+                    "target": "reception_desk_1"
+                },
                 {
                     "type": "execute_action",
                     "sync_time": "0.0",
@@ -511,7 +526,7 @@
             ]
         },
         {
-            "name": "player_move_to_storage_cabinet_1_routine",
+            "name": "debug_player_move_to_storage_cabinet_1_routine",
             "tasks": [
                 {
                     "type": "behavior",
