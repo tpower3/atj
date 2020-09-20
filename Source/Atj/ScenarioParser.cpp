@@ -14,6 +14,16 @@ FScenarioData AScenarioParser::GetScenarioData() const {
 	return _scenarioData;
 }
 
+TSharedRef<FCondition> AScenarioParser::ParseConditionNpcMoodCheck(const FJsonObject& conditionObject) const
+{
+	TSharedRef<FCondition_NpcMoodCheck> fCondition = MakeShared<FCondition_NpcMoodCheck>();
+	fCondition->type = ConditionTypes::NpcMoodCheck;
+	fCondition->npc = conditionObject.GetStringField("npc");
+	fCondition->check = conditionObject.GetStringField("check");
+	fCondition->value = conditionObject.GetStringField("value");
+	return fCondition;
+}
+
 TSharedRef<FSignal> AScenarioParser::ParseSignalBindNpc(const FJsonObject& signalObject)
 {
 	TSharedRef<FSignal_BindNpc> fSignal = MakeShared<FSignal_BindNpc>();
@@ -97,13 +107,15 @@ void AScenarioParser::BeginPlay()
 			FTrigger fTrigger;
 
 			// Parse conditions
-			const auto conditions = triggerObject->GetArrayField("conditions");
-			for (const auto& condition : conditions) {
-				FCondition fCondition;
-				fCondition.check = condition->AsObject()->GetStringField("check");
-				fCondition.npc = condition->AsObject()->GetStringField("npc");
-				fCondition.location = condition->AsObject()->GetStringField("location");
-				fTrigger.conditions.Add(fCondition);
+			const auto all_of_conditions = triggerObject->GetArrayField("all_of");
+			for (const auto& condition : all_of_conditions) {
+				const auto conditionObject = condition->AsObject();
+
+				const auto type = conditionObject->GetStringField("type");
+				if (type == "npc_mood_check") {
+					TSharedRef<FCondition> fCondition = ParseConditionNpcMoodCheck(*conditionObject);
+					fTrigger.allOf.Add(fCondition);
+				}
 			}
 
 			// Parse actions
@@ -191,11 +203,20 @@ void AScenarioParser::BeginPlay()
 		for (const auto& trigger : scenarioData.triggers)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Trigger Name: %s"), *trigger.Key);
-			for (const auto& condition : trigger.Value.conditions) {
-				UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Check: %s"), *(condition.check));
-				UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Npc: %s"), *(condition.npc));
-				UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Location: %s"), *(condition.location));
-				UE_LOG(LogTemp, Warning, TEXT("---"));
+			for (const auto& condition : trigger.Value.allOf) {
+				UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Type: %s"), *(UEnum::GetValueAsString<ConditionTypes>(condition->type)));
+				switch (condition->type) {
+					case ConditionTypes::NpcMoodCheck:
+					{
+						const TSharedRef<FCondition_NpcMoodCheck> conditionCast = StaticCastSharedRef<FCondition_NpcMoodCheck>(condition);
+						UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Npc: %s"), *(conditionCast->npc));
+						UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Check: %s"), *(conditionCast->check));
+						UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Value: %s"), *(conditionCast->value));
+
+						UE_LOG(LogTemp, Warning, TEXT("---"));
+					}
+					break;
+				}
 			}
 			for (const auto& action : trigger.Value.actions) {
 				UE_LOG(LogTemp, Warning, TEXT("Trigger Action: %s"), *action);

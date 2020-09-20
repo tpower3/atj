@@ -9,19 +9,33 @@
 
 #include "ScenarioParser.generated.h"
 
+UENUM()
+enum ConditionTypes {
+	NpcMoodCheck UMETA(DisplayName = "NpcMoodCheck")
+};
+
 USTRUCT(BlueprintType)
 struct FCondition
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(BlueprintReadWrite)
-		FString check;
+		TEnumAsByte<ConditionTypes> type;
+};
+
+USTRUCT(BlueprintType)
+struct FCondition_NpcMoodCheck : public FCondition
+{
+	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(BlueprintReadWrite)
 		FString npc;
 
 	UPROPERTY(BlueprintReadWrite)
-		FString location;
+		FString check;
+
+	UPROPERTY(BlueprintReadWrite)
+		FString value;
 };
 
 USTRUCT(BlueprintType)
@@ -29,8 +43,8 @@ struct FTrigger
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(BlueprintReadWrite)
-		TArray<FCondition> conditions;
+	// Trigger will fire actions when allOf the events are met
+	TArray<TSharedRef<FCondition>> allOf;
 
 	UPROPERTY(BlueprintReadWrite)
 		TArray<FString> actions;
@@ -174,6 +188,7 @@ public:
 		FScenarioData GetScenarioData() const;
 
 private:
+	TSharedRef<FCondition> ParseConditionNpcMoodCheck(const FJsonObject& conditionObject) const;
 	TSharedRef<FSignal> ParseSignalBindNpc(const FJsonObject& signalObject);
 	TSharedRef<FSignal> ParseSignalObjectSetState(const FJsonObject& signalObject);
 

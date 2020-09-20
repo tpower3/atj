@@ -7,12 +7,27 @@
         "object_1",
         "object_2",
         "object_3",
-        "object_4"
+        "object_4",
+        "walk_away_object"
     ],
     "items": [
         "item_1"
     ],
     "triggers": [
+        {
+            "name": "zach_mood_2_trigger",
+            "all_of": [
+                {
+                    "type": "npc_mood_check",
+                    "npc": "zak",
+                    "check": "LTorEQ",
+                    "value": "2"
+				}
+            ],
+            "actions": [
+                "bind_zak_to_zak_walk_away_routine_action"
+            ]
+        }
     ],
     "actions": [
         {
@@ -47,6 +62,16 @@
                     "type": "bind_npc",
                     "npc": "sara",
                     "routine": "sara_walk_around_routine"
+                }
+            ]
+        },
+		{
+            "name": "bind_zak_to_zak_walk_away_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "zak",
+                    "routine": "zak_walk_away_routine"
                 }
             ]
         }
@@ -131,6 +156,17 @@
                     "action": "bind_sara_to_sara_walk_around_routine_action"
                 }
             ]
-        }
+        },
+		{
+            "name": "zak_walk_away_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.1",
+                    "behavior": "move_to",
+                    "target": "walk_away_object"
+                }
+            ]
+        },
     ]
 }
