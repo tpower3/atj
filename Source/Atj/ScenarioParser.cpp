@@ -10,8 +10,11 @@ AScenarioParser::AScenarioParser()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-FScenarioData AScenarioParser::GetScenarioData() const {
-	return _scenarioData;
+FScenarioData AScenarioParser::GetScenarioData() {
+	if (!_scenarioData.IsSet()) {
+		ParseScenario();
+	}
+	return _scenarioData.GetValue();
 }
 
 TSharedRef<FCondition> AScenarioParser::ParseConditionNpcMoodCheck(const FJsonObject& conditionObject) const
@@ -74,7 +77,10 @@ static TSharedRef<FTask> ParseTaskExecuteAction(const FJsonObject& taskObject)
 void AScenarioParser::BeginPlay()
 {
 	Super::BeginPlay();
+}
 
+void AScenarioParser::ParseScenario()
+{
 	FString dataPath = FPaths::GameSourceDir() + "Atj/data/mvp_scenario.json";
 	FString result;
 	FFileHelper::LoadFileToString(result, *dataPath);

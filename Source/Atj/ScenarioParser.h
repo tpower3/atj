@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Misc/Optional.h"
 
 #include "Templates/SharedPointer.h"
 
@@ -198,14 +199,16 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Simulator")
-		FScenarioData GetScenarioData() const;
+		FScenarioData GetScenarioData();
 
 private:
+	void ParseScenario();
+
 	TSharedRef<FCondition> ParseConditionNpcMoodCheck(const FJsonObject& conditionObject) const;
 	TSharedRef<FSignal> ParseSignalBindNpc(const FJsonObject& signalObject);
 	TSharedRef<FSignal> ParseSignalIncrementMood(const FJsonObject& signalObject);
 	TSharedRef<FSignal> ParseSignalObjectSetState(const FJsonObject& signalObject);
 
-	FScenarioData _scenarioData;
+	TOptional<FScenarioData> _scenarioData;
 
 };
