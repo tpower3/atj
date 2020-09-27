@@ -22,7 +22,7 @@
                     "npc": "zak",
                     "check": "LTorEQ",
                     "value": "2"
-				}
+                }
             ],
             "actions": [
                 "bind_zak_to_zak_walk_away_routine_action"
@@ -65,7 +65,7 @@
                 }
             ]
         },
-		{
+        {
             "name": "bind_zak_to_zak_walk_away_routine_action",
             "signals": [
                 {
@@ -74,7 +74,17 @@
                     "routine": "zak_walk_away_routine"
                 }
             ]
-        }
+        },
+        {
+            "name": "increment_mood_zak",
+            "signals": [
+                {
+                    "type": "increment_mood",
+                    "npc": "zak",
+                    "value": 1
+                }
+            ]
+        },
     ],
     "routines": [
         {
@@ -109,6 +119,11 @@
                     "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "object_3"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.1",
+                    "action": "increment_mood_zak"
                 },
                 {
                     "type": "execute_action",
@@ -157,7 +172,7 @@
                 }
             ]
         },
-		{
+        {
             "name": "zak_walk_away_routine",
             "tasks": [
                 {

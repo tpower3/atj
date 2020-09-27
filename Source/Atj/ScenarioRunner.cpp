@@ -79,7 +79,6 @@ static AItemActor* FindItemActor(UWorld* world, const FString& itemName) {
 	for (TActorIterator<AItemActor> It(world); It; ++It)
 	{
 		const auto name = It->GetName();
-		UE_LOG(LogTemp, Warning, TEXT("Consider: %s"), *(name));
 		if (name == itemName) {
 			return *It;
 		}
@@ -196,6 +195,27 @@ void AScenarioRunner::ProcessAction(const FScenarioData& scenarioData, FString a
 			_npcBindingsQueue.Add(npcName, npcBindingData);
 		}
 			break;
+		case SignalTypes::IncrementMood:
+		{
+			const TSharedRef<FSignal_IncrementMood> signalIncrementMood = StaticCastSharedRef<FSignal_IncrementMood>(signal);
+			int value;
+			FDefaultValueHelper::ParseInt(signalIncrementMood->value, value);
+
+			FString npcName = signalIncrementMood->npc;
+
+			const auto iter = _npcMoodData.Find(npcName);
+			if (nullptr == iter) {
+				UE_LOG(LogTemp, Warning, TEXT("IncrementMood npc lookup error: %s"), *(npcName));
+				// TODO: Handle error
+				return;
+			}
+
+			// Increment the Npc Mood by the desired value, clamping the final result
+			constexpr int MIN_MOOD_VALUE = 0;
+			constexpr int MAX_MOOD_VALUE = 5;
+			*iter = FMath::Clamp(*iter + value, MIN_MOOD_VALUE, MAX_MOOD_VALUE);
+		}
+		break;
 		default:
 			// TODO: Handle undefined type
 			UE_LOG(LogTemp, Warning, TEXT("undefined"));
@@ -206,6 +226,10 @@ void AScenarioRunner::ProcessAction(const FScenarioData& scenarioData, FString a
 
 void AScenarioRunner::SetScenarioData(const FScenarioData& data) {
 	_scenarioData = data;
+	constexpr int DEFAULT_MOOD_VALUE = 3;
+	for (const FString& npc : _scenarioData.npcs) {
+		_npcMoodData.Add(npc, DEFAULT_MOOD_VALUE);
+	}
 	if (data.actions.Contains("simulation_start")) {
 		ProcessAction(data, "simulation_start", GetWorld()->GetTimeSeconds());
 	}

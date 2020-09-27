@@ -53,6 +53,7 @@ struct FTrigger
 UENUM()
 enum SignalTypes {
 	BindNpc UMETA(DisplayName = "BindNpc"),
+	IncrementMood UMETA(DisplayName = "IncrementMood"),
 	ObjectSetState UMETA(DisplayName = "ObjectSetState")
 };
 
@@ -75,6 +76,18 @@ struct FSignal_BindNpc : public FSignal
 
 	UPROPERTY(BlueprintReadWrite)
 		FString routine;
+};
+
+USTRUCT(BlueprintType)
+struct FSignal_IncrementMood : public FSignal
+{
+	GENERATED_USTRUCT_BODY()
+
+		UPROPERTY(BlueprintReadWrite)
+		FString npc;
+
+	UPROPERTY(BlueprintReadWrite)
+		FString value;
 };
 
 USTRUCT(BlueprintType)
@@ -190,6 +203,7 @@ public:
 private:
 	TSharedRef<FCondition> ParseConditionNpcMoodCheck(const FJsonObject& conditionObject) const;
 	TSharedRef<FSignal> ParseSignalBindNpc(const FJsonObject& signalObject);
+	TSharedRef<FSignal> ParseSignalIncrementMood(const FJsonObject& signalObject);
 	TSharedRef<FSignal> ParseSignalObjectSetState(const FJsonObject& signalObject);
 
 	FScenarioData _scenarioData;

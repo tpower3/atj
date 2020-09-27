@@ -52,4 +52,6 @@ private:
 	TMap<FString, FNpcBindingData> _npcBindingsQueue;
 
 	float _previousTickGameTime = 0.0;
+
+	TMap<FString, int> _npcMoodData;
 };

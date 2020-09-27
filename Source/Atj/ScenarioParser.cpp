@@ -33,6 +33,15 @@ TSharedRef<FSignal> AScenarioParser::ParseSignalBindNpc(const FJsonObject& signa
 	return fSignal;
 }
 
+TSharedRef<FSignal> AScenarioParser::ParseSignalIncrementMood(const FJsonObject& signalObject)
+{
+	TSharedRef<FSignal_IncrementMood> fSignal = MakeShared<FSignal_IncrementMood>();
+	fSignal->type = SignalTypes::IncrementMood;
+	fSignal->npc = signalObject.GetStringField("npc");
+	fSignal->value = signalObject.GetStringField("value");
+	return fSignal;
+}
+
 TSharedRef<FSignal> AScenarioParser::ParseSignalObjectSetState(const FJsonObject& signalObject)
 {
 	TSharedRef<FSignal_ObjectSetState> fSignal = MakeShared<FSignal_ObjectSetState>();
@@ -148,6 +157,9 @@ void AScenarioParser::BeginPlay()
 				if (type == "bind_npc") {
 					TSharedRef<FSignal> fSignal = ParseSignalBindNpc(*signalObject);
 					fAction.signals.Add(fSignal);
+				} else if (type == "increment_mood") {
+					TSharedRef<FSignal> fSignal = ParseSignalIncrementMood(*signalObject);
+					fAction.signals.Add(fSignal);
 				} else if (type == "object_set_state") {
 					TSharedRef<FSignal> fSignal = ParseSignalObjectSetState(*signalObject);
 					fAction.signals.Add(fSignal);
@@ -237,6 +249,14 @@ void AScenarioParser::BeginPlay()
 					UE_LOG(LogTemp, Warning, TEXT("---"));
 				}
 					break;
+				case SignalTypes::IncrementMood:
+				{
+					const TSharedRef<FSignal_IncrementMood> signalCast = StaticCastSharedRef<FSignal_IncrementMood>(signal);
+					UE_LOG(LogTemp, Warning, TEXT("Action Signal Npc: %s"), *(signalCast->npc));
+					UE_LOG(LogTemp, Warning, TEXT("Action Signal Value: %s"), *(signalCast->value));
+					UE_LOG(LogTemp, Warning, TEXT("---"));
+				}
+				break;
 				case SignalTypes::ObjectSetState:
 				{
 					const TSharedRef<FSignal_ObjectSetState> signalCast = StaticCastSharedRef<FSignal_ObjectSetState>(signal);
