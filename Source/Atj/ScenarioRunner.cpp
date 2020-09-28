@@ -32,8 +32,13 @@ void AScenarioRunner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (!_scenarioData.IsSet()) {
+		return;
+	}
+
 	// TODO: Verify that DeltaTime is GameTime not WorldTime
-	ProcessNpcBindings(GetWorld(), _scenarioData, _npcBindings, GetWorld()->GetTimeSeconds());
+	ProcessTriggers(_scenarioData.GetValue());
+	ProcessNpcBindings(GetWorld(), _scenarioData.GetValue(), _npcBindings, GetWorld()->GetTimeSeconds());
 	for (const auto& elem : _npcBindingsQueue) {
 		_npcBindings.Add(elem);
 	}
@@ -84,6 +89,66 @@ static AItemActor* FindItemActor(UWorld* world, const FString& itemName) {
 		}
 	}
 	return nullptr;
+}
+
+static bool ProcessNpcMoodCheck(const TMap<FString, int>& npcMoodData, const TSharedRef<FCondition_NpcMoodCheck> conditionNpcMoodCheck) {
+	const auto iter = npcMoodData.Find(conditionNpcMoodCheck->npc);
+	if (nullptr == iter) {
+		// TODO: Handle error state
+		return false;
+	}
+	const int npcMoodValue = *iter;
+	int checkValue;
+	FDefaultValueHelper::ParseInt(conditionNpcMoodCheck->value, checkValue);
+	if (conditionNpcMoodCheck->check == "LTorEQ") {
+		return npcMoodValue <= checkValue;
+	}
+	if (conditionNpcMoodCheck->check == "LT") {
+		return npcMoodValue < checkValue;
+	}
+	if (conditionNpcMoodCheck->check == "GTorEQ") {
+		return npcMoodValue >= checkValue;
+	}
+	if (conditionNpcMoodCheck->check == "GT") {
+		return npcMoodValue > checkValue;
+	}
+	if (conditionNpcMoodCheck->check == "EQ") {
+		return npcMoodValue == checkValue;
+	}
+
+	// TODO: Handle unhandled check
+	return false;
+}
+
+void AScenarioRunner::ProcessTriggers(const FScenarioData& scenarioData) {
+	for (const auto& trigger : scenarioData.triggers) {
+		const bool previousTriggerState = _triggerState[trigger.Key];
+		bool triggerFired = true;
+		for (const auto& condition : trigger.Value.allOf) {
+			switch (condition->type) {
+			case ConditionTypes::NpcMoodCheck:
+				const TSharedRef<FCondition_NpcMoodCheck> conditionNpcMoodCheck = StaticCastSharedRef<FCondition_NpcMoodCheck>(condition);
+				const bool result = ProcessNpcMoodCheck(_npcMoodData, conditionNpcMoodCheck);
+				if (!result) {
+					triggerFired = false;
+				}
+				break;
+			}
+
+			if (!triggerFired) {
+				UE_LOG(LogTemp, Warning, TEXT("Trigger NOT fired"));
+				break;
+			}
+		}
+		if (!previousTriggerState && triggerFired) {
+			UE_LOG(LogTemp, Warning, TEXT("Trigger fired"));
+			for (const auto& action : trigger.Value.actions) {
+				UE_LOG(LogTemp, Warning, TEXT("ProcessAction: %s"), *(action));
+				ProcessAction(scenarioData, action, GetWorld()->GetTimeSeconds());
+			}
+		}
+		_triggerState[trigger.Key] = triggerFired;
+	}
 }
 
 void AScenarioRunner::ProcessNpcBindings(UWorld* world, const FScenarioData& scenarioData, const TMap<FString, FNpcBindingData>& npcBindings, float currentTime) {
@@ -227,8 +292,11 @@ void AScenarioRunner::ProcessAction(const FScenarioData& scenarioData, FString a
 void AScenarioRunner::SetScenarioData(const FScenarioData& data) {
 	_scenarioData = data;
 	constexpr int DEFAULT_MOOD_VALUE = 3;
-	for (const FString& npc : _scenarioData.npcs) {
+	for (const FString& npc : _scenarioData.GetValue().npcs) {
 		_npcMoodData.Add(npc, DEFAULT_MOOD_VALUE);
+	}
+	for (const auto& trigger : _scenarioData.GetValue().triggers) {
+		_triggerState.Add(trigger.Key, false);
 	}
 	if (data.actions.Contains("simulation_start")) {
 		ProcessAction(data, "simulation_start", GetWorld()->GetTimeSeconds());

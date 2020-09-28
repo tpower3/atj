@@ -44,8 +44,9 @@ private:
 
 	void ProcessAction(const FScenarioData& scenarioData, FString actionName, float startTime);
 	void ProcessNpcBindings(UWorld* world, const FScenarioData& data, const TMap<FString, FNpcBindingData>& npcBindings, float currentTime);
+	void ProcessTriggers(const FScenarioData& scenarioData);
 
-	FScenarioData _scenarioData;
+	TOptional<FScenarioData> _scenarioData;
 
 	// Used to map NPCs to a routine
 	TMap<FString, FNpcBindingData> _npcBindings;
@@ -54,4 +55,6 @@ private:
 	float _previousTickGameTime = 0.0;
 
 	TMap<FString, int> _npcMoodData;
+
+	TMap<FString, bool> _triggerState;
 };

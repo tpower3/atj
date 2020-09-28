@@ -15,13 +15,13 @@
     ],
     "triggers": [
         {
-            "name": "zach_mood_2_trigger",
+            "name": "zach_mood_1_trigger",
             "all_of": [
                 {
                     "type": "npc_mood_check",
                     "npc": "zak",
                     "check": "LTorEQ",
-                    "value": "2"
+                    "value": "1"
                 }
             ],
             "actions": [
@@ -76,12 +76,12 @@
             ]
         },
         {
-            "name": "increment_mood_zak",
+            "name": "decrement_mood_zak",
             "signals": [
                 {
                     "type": "increment_mood",
                     "npc": "zak",
-                    "value": 1
+                    "value": -1
                 }
             ]
         },
@@ -123,7 +123,7 @@
                 {
                     "type": "execute_action",
                     "sync_time": "0.1",
-                    "action": "increment_mood_zak"
+                    "action": "decrement_mood_zak"
                 },
                 {
                     "type": "execute_action",
