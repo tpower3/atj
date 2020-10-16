@@ -136,7 +136,6 @@ void AScenarioRunner::ProcessTriggers(const FScenarioData& scenarioData) {
 			}
 
 			if (!triggerFired) {
-				UE_LOG(LogTemp, Warning, TEXT("Trigger NOT fired"));
 				break;
 			}
 		}

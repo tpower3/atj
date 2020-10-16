@@ -15,7 +15,7 @@
     ],
     "triggers": [
         {
-            "name": "zach_mood_1_trigger",
+            "name": "zach_mood_is_1_trigger",
             "all_of": [
                 {
                     "type": "npc_mood_check",

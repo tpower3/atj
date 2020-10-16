@@ -39,6 +39,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Simulator")
 	void SetScenarioData(const FScenarioData& data);
 
+	UFUNCTION(BlueprintCallable, Category = "Simulator")
+	TMap<FString, FNpcBindingData> getNpcBindings() const {
+		return _npcBindings;
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Simulator")
+		TMap<FString, int> getNpcMoodData() const {
+		return _npcMoodData;
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "Simulator")
+		TMap<FString, bool> getTriggerState() const {
+		return _triggerState;
+	}
+
 private:
 	void InitScene();
 
