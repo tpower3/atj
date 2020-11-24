@@ -299,7 +299,7 @@
                     "type": "behavior",
                     "sync_time": "1.0",
                     "behavior": "put_down",
-                    "target": "big_meeting_agenda_1"
+                    "target": "bulletin_board_1"
                 },
                 {
                     "type": "execute_action",
@@ -343,7 +343,7 @@
                     "type": "behavior",
                     "sync_time": "1.0",
                     "behavior": "put_down",
-                    "target": "meeting_food_1"
+                    "target": "meeting_room_table_1"
                 },
                 {
                     "type": "behavior",
@@ -394,7 +394,7 @@
                     "type": "behavior",
                     "sync_time": "1.0",
                     "behavior": "put_down",
-                    "target": "hacky_sack_1"
+                    "target": "break_room_table_1"
                 },
                 {
                     "type": "behavior",
@@ -434,7 +434,7 @@
                     "type": "behavior",
                     "sync_time": "30.0",
                     "behavior": "put_down",
-                    "target": "zaks_breakfast_1"
+                    "target": "zaks_desk_1"
                 },
                 {
                     "type": "execute_action",
@@ -513,7 +513,7 @@
                     "type": "behavior",
                     "sync_time": "1.0",
                     "behavior": "put_down",
-                    "target": "saras_coffee_cup_1"
+                    "target": "break_room_sink_1"
                 },
                 {
                     "type": "execute_action",
@@ -616,7 +616,7 @@
                     "type": "behavior",
                     "sync_time": "30.0",
                     "behavior": "put_down",
-                    "target": "zaks_breakfast_1"
+                    "target": "storage_cabinet_1"
                 },
                 {
                     "type": "execute_action",
@@ -671,12 +671,12 @@
                     "sync_time": "0.0",
                     "behavior": "move_to",
                     "target": "bulletin_board_1"
-                }, 
+                },
                 {
                     "type": "behavior",
                     "sync_time": "20.0",
                     "behavior": "put_down",
-                    "target": "hacky_sack_club_flyer_1"
+                    "target": "bulletin_board_1"
                 }
             ]
         }
