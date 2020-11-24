@@ -31,6 +31,15 @@
         "storage_cabinet_1",
         "copier_1"
     ],
+    "items": [
+        "crossword_puzzle_1", 
+        "big_meeting_agenda_1",
+        "meeting_food_1",
+        "hacky_sack_1", 
+        "zaks_breakfast_1", 
+        "saras_coffee_cup_1", 
+        "hacky_sack_club_flyer_1"
+    ],
     "triggers": [
     ],
     "actions": [
@@ -225,8 +234,20 @@
             "name": "reception_desk_routine",
             "tasks": [
                 {
+                    "type": "behavior",
+                    "sync_time": "0.01",
+                    "behavior": "pick_up",
+                    "target": "crossword_puzzle_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "50.0",
+                    "behavior": "put_down",
+                    "target": "reception_desk_1"
+                },
+                {
                     "type": "execute_action",
-                    "sync_time": "0.0",
+                    "sync_time": "20.0",
                     "action": "bind_juan_to_mens_bathroom_routine_action"
                 }
             ]
@@ -264,8 +285,20 @@
                 },
                 {
                     "type": "behavior",
+                    "sync_time": "10.0",
+                    "behavior": "pick_up",
+                    "target": "big_meeting_agenda_1"
+                },
+                {
+                    "type": "behavior",
                     "sync_time": "20.0",
                     "behavior": "move_to",
+                    "target": "bulletin_board_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "1.0",
+                    "behavior": "put_down",
                     "target": "bulletin_board_1"
                 },
                 {
@@ -285,6 +318,12 @@
                     "target": "refrigerator_1_routine"
                 },
                 {
+                    "type": "behavior",
+                    "sync_time": "20.0",
+                    "behavior": "pick_up",
+                    "target": "meeting_food_1"
+                },
+                {
                     "type": "execute_action",
                     "sync_time": "20.0",
                     "action": "bind_juan_to_meeting_room_routine_action"
@@ -298,6 +337,12 @@
                     "type": "behavior",
                     "sync_time": "0.0",
                     "behavior": "move_to",
+                    "target": "meeting_room_table_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "1.0",
+                    "behavior": "put_down",
                     "target": "meeting_room_table_1"
                 },
                 {
@@ -317,6 +362,12 @@
         {
             "name": "reception_desk_hacky_sack_routine",
             "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.1",
+                    "behavior": "pick_up",
+                    "target": "hacky_sack_1"
+                },
                 {
                     "type": "behavior",
                     "sync_time": "0.0",
@@ -341,9 +392,21 @@
                 },
                 {
                     "type": "behavior",
+                    "sync_time": "1.0",
+                    "behavior": "put_down",
+                    "target": "break_room_table_1"
+                },
+                {
+                    "type": "behavior",
                     "sync_time": "20.0",
                     "behavior": "move_to",
                     "target": "refrigerator_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "0.1",
+                    "behavior": "pick_up",
+                    "target": "zaks_breakfast_1"
                 },
                 {
                     "type": "behavior",
@@ -365,6 +428,12 @@
                     "type": "behavior",
                     "sync_time": "0.0",
                     "behavior": "move_to",
+                    "target": "zaks_desk_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "30.0",
+                    "behavior": "put_down",
                     "target": "zaks_desk_1"
                 },
                 {
@@ -402,6 +471,12 @@
                 {
                     "type": "behavior",
                     "sync_time": "10.0",
+                    "behavior": "pick_up",
+                    "target": "crossword_puzzle_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "10.0",
                     "behavior": "move_to",
                     "target": "meeting_room_chair_2"
                 }
@@ -410,6 +485,12 @@
         {
             "name": "morning_coffee_break_room_sara_routine",
             "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.1",
+                    "behavior": "pick_up",
+                    "target": "saras_coffee_cup_1"
+                },
                 {
                     "type": "behavior",
                     "sync_time": "0.0",
@@ -426,6 +507,12 @@
                     "type": "behavior",
                     "sync_time": "30.0",
                     "behavior": "move_to",
+                    "target": "break_room_sink_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "1.0",
+                    "behavior": "put_down",
                     "target": "break_room_sink_1"
                 },
                 {
@@ -504,6 +591,12 @@
                     "target": "refrigerator_1"
                 },
                 {
+                    "type": "behavior",
+                    "sync_time": "30.0",
+                    "behavior": "pick_up",
+                    "target": "zaks_breakfast_1"
+                },
+                {
                     "type": "execute_action",
                     "sync_time": "20.0",
                     "action": "bind_player_to_debug_player_move_to_storage_cabinet_1_routine_action"
@@ -511,12 +604,18 @@
             ]
         },
         {
-            "name": "player_move_to_storage_cabinet_1_routine",
+            "name": "debug_player_move_to_storage_cabinet_1_routine",
             "tasks": [
                 {
                     "type": "behavior",
                     "sync_time": "0.0",
                     "behavior": "move_to",
+                    "target": "storage_cabinet_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "30.0",
+                    "behavior": "put_down",
                     "target": "storage_cabinet_1"
                 },
                 {
@@ -534,6 +633,12 @@
                     "sync_time": "0.0",
                     "behavior": "move_to",
                     "target": "zaks_desk_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "10.0",
+                    "behavior": "pick_up",
+                    "target": "hacky_sack_club_flyer_1"
                 },
                 {
                     "type": "execute_action",
@@ -565,6 +670,12 @@
                     "type": "behavior",
                     "sync_time": "0.0",
                     "behavior": "move_to",
+                    "target": "bulletin_board_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "20.0",
+                    "behavior": "put_down",
                     "target": "bulletin_board_1"
                 }
             ]
