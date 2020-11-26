@@ -50,10 +50,6 @@
                     "check": "LTorEQ",
                     "value": "2"
                 }
-            ],
-            "actions": [
-                "bind_zak_to_decrement_mood_zak_routine_action"
-            ]
         }
     ],
     "actions": [
@@ -297,7 +293,7 @@
             "signals": [
                 {
                     "type": "increment_mood",
-                    "npc": "zal",
+                    "npc": "zak",
                     "value": -1
                 }
             ]
