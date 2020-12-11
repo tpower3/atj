@@ -686,7 +686,7 @@
                 },
                 {
                     "type": "execute_action",
-                    "sync_time": "20.",
+                    "sync_time": "20.0",
                     "action": "decrement_mood_sara_action"
                 }
             ]
