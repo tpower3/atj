@@ -50,6 +50,7 @@
                     "check": "LTorEQ",
                     "value": "2"
                 }
+            ]
         }
     ],
     "actions": [
@@ -305,7 +306,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.01",
+                    "sync_time": "0.1",
                     "behavior": "pick_up",
                     "target": "crossword_puzzle_1"
                 },
@@ -549,7 +550,7 @@
                 },
                 {
                     "type": "execute_action",
-                    "sync_time": "0.01",
+                    "sync_time": "0.1",
                     "action": "decrement_mood_zak_action"
                 },
                 {
