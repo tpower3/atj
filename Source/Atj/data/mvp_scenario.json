@@ -5,7 +5,7 @@
         "sara"
     ],
     "objects": [
-        "mens_bathroom_toilet_1", 
+        "mens_bathroom_toilet_1",
         "mens_bathroom_sink_1",
         "ladys_bathroom_toilet_1",
         "printer_1",
@@ -41,6 +41,17 @@
         "hacky_sack_club_flyer_1"
     ],
     "triggers": [
+        {
+            "name": "zach_mood_1_trigger",
+            "all_of": [
+                {
+                    "type": "npc_mood_check",
+                    "npc": "sara",
+                    "check": "LTorEQ",
+                    "value": "2"
+                }
+            ]
+        }
     ],
     "actions": [
         {
@@ -227,6 +238,66 @@
                     "routine": "debug_player_move_to_bulletin_board_1_routine"
                 }
             ]
+        },
+        {
+            "name": "increment_mood_juan_action",
+            "signals": [
+                {
+                    "type": "increment_mood",
+                    "npc": "juan",
+                    "value": 1
+                }
+            ]
+        },
+        {
+            "name": "increment_mood_zak_action",
+            "signals": [
+                {
+                    "type": "increment_mood",
+                    "npc": "zak",
+                    "value": 1
+                }
+            ]
+        },
+        {
+            "name": "increment_mood_sara_action",
+            "signals": [
+                {
+                    "type": "increment_mood",
+                    "npc": "sara",
+                    "value": 1
+                }
+            ]
+        },
+        {
+            "name": "decrement_mood_juan_action",
+            "signals": [
+                {
+                    "type": "increment_mood",
+                    "npc": "juan",
+                    "value": -1
+                }
+            ]
+        },
+        {
+            "name": "decrement_mood_sara_action",
+            "signals": [
+                {
+                    "type": "increment_mood",
+                    "npc": "sara",
+                    "value": -1
+                }
+            ]
+        },
+        {
+            "name": "decrement_mood_zak_action",
+            "signals": [
+                {
+                    "type": "increment_mood",
+                    "npc": "zak",
+                    "value": -1
+                }
+            ]
         }
     ],
     "routines": [
@@ -235,7 +306,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.01",
+                    "sync_time": "0.1",
                     "behavior": "pick_up",
                     "target": "crossword_puzzle_1"
                 },
@@ -260,6 +331,11 @@
                     "sync_time": "0.0",
                     "behavior": "move_to",
                     "target": "mens_bathroom_toilet_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.1",
+                    "action": "increment_mood_juan_action"
                 },
                 {
                     "type": "behavior",
@@ -313,7 +389,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "refrigerator_1_routine"
                 },
@@ -322,6 +398,11 @@
                     "sync_time": "20.0",
                     "behavior": "pick_up",
                     "target": "meeting_food_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.1",
+                    "action": "decrement_mood_juan_action"
                 },
                 {
                     "type": "execute_action",
@@ -376,6 +457,11 @@
                 },
                 {
                     "type": "execute_action",
+                    "sync_time": "10.0",
+                    "action": "decrement_mood_zak_action"
+                },
+                {
+                    "type": "execute_action",
                     "sync_time": "40.0",
                     "action": "bind_zak_to_break_room_eat_breakfast_routine_action"
                 }
@@ -413,6 +499,16 @@
                     "sync_time": "20.0",
                     "behavior": "move_to",
                     "target": "microwave_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.1",
+                    "action": "decrement_mood_sara_action"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.1",
+                    "action": "increment_mood_zak_action"
                 },
                 {
                     "type": "execute_action",
@@ -454,6 +550,11 @@
                 },
                 {
                     "type": "execute_action",
+                    "sync_time": "0.1",
+                    "action": "decrement_mood_zak_action"
+                },
+                {
+                    "type": "execute_action",
                     "sync_time": "10.0",
                     "action": "bind_zak_to_take_crossword_puzzle_into_meeting_room_routine_action"
                 }
@@ -479,6 +580,11 @@
                     "sync_time": "10.0",
                     "behavior": "move_to",
                     "target": "meeting_room_chair_2"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "10.0",
+                    "action": "decrement_mood_zak_action"
                 }
             ]
         },
@@ -578,6 +684,11 @@
                     "sync_time": "0.0",
                     "behavior": "move_to",
                     "target": "meeting_room_chair_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "20.0",
+                    "action": "decrement_mood_sara_action"
                 }
             ]
         },
