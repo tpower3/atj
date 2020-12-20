@@ -8,7 +8,8 @@
         "object_2",
         "object_3",
         "object_4",
-        "walk_away_object"
+        "walk_away_object",
+		"position_check_object"
     ],
     "items": [
         "item_1"
@@ -26,6 +27,20 @@
             ],
             "actions": [
                 "bind_zak_to_zak_walk_away_routine_action"
+            ]
+        },
+		{
+            "name": "sara_in_position_trigger",
+            "all_of": [
+                {
+                    "type": "npc_position_check",
+                    "npc": "sara",
+                    "object": "position_check_object",
+                    "distance": "250"
+                }
+            ],
+            "actions": [
+                "bind_sara_to_sara_walk_away_routine_action"
             ]
         }
     ],
@@ -72,6 +87,16 @@
                     "type": "bind_npc",
                     "npc": "zak",
                     "routine": "zak_walk_away_routine"
+                }
+            ]
+        },
+		{
+            "name": "bind_sara_to_sara_walk_away_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "sara",
+                    "routine": "sara_walk_away_routine"
                 }
             ]
         },
@@ -174,6 +199,17 @@
         },
         {
             "name": "zak_walk_away_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.1",
+                    "behavior": "move_to",
+                    "target": "walk_away_object"
+                }
+            ]
+        },
+		{
+            "name": "sara_walk_away_routine",
             "tasks": [
                 {
                     "type": "behavior",

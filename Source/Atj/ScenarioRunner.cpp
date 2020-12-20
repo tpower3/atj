@@ -3,6 +3,7 @@
 
 #include "ScenarioRunner.h"
 
+#include "Math/Vector.h"
 #include "Misc/DefaultValueHelper.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Engine/World.h"
@@ -37,7 +38,7 @@ void AScenarioRunner::Tick(float DeltaTime)
 	}
 
 	// TODO: Verify that DeltaTime is GameTime not WorldTime
-	ProcessTriggers(_scenarioData.GetValue());
+	ProcessTriggers(GetWorld(), _scenarioData.GetValue());
 	ProcessNpcBindings(GetWorld(), _scenarioData.GetValue(), _npcBindings, GetWorld()->GetTimeSeconds());
 	for (const auto& elem : _npcBindingsQueue) {
 		_npcBindings.Add(elem);
@@ -120,19 +121,53 @@ static bool ProcessNpcMoodCheck(const TMap<FString, int>& npcMoodData, const TSh
 	return false;
 }
 
-void AScenarioRunner::ProcessTriggers(const FScenarioData& scenarioData) {
+static bool ProcessNpcPositionCheck(UWorld* world, const TSharedRef<FCondition_NpcPositionCheck> conditionNpcPositionCheck) {
+	ANpcCharacter* npcCharacter = FindNpcCharacter(world, conditionNpcPositionCheck->npc);
+	if (!npcCharacter) {
+		// TODO: Handle failed lookup
+		UE_LOG(LogTemp, Warning, TEXT("Failed to find: %s"), *(conditionNpcPositionCheck->npc));
+		return false;
+	}
+
+	AObjectActor* targetActor = FindObjectActor(world, conditionNpcPositionCheck->object);
+	if (!targetActor) {
+		// TODO: Handle failed lookup
+		UE_LOG(LogTemp, Warning, TEXT("Failed to find actor in ProcessNpcPositionCheck: %s"), *(conditionNpcPositionCheck->object));
+		return false;
+	}
+
+	float checkDistance;
+	FDefaultValueHelper::ParseFloat(conditionNpcPositionCheck->distance, checkDistance);
+
+
+	const auto distance = FVector::Dist(npcCharacter->GetActorLocation(), targetActor->GetActorLocation());
+	return distance <= checkDistance;
+}
+
+void AScenarioRunner::ProcessTriggers(UWorld* world, const FScenarioData& scenarioData) {
 	for (const auto& trigger : scenarioData.triggers) {
 		const bool previousTriggerState = _triggerState[trigger.Key];
 		bool triggerFired = true;
 		for (const auto& condition : trigger.Value.allOf) {
 			switch (condition->type) {
 			case ConditionTypes::NpcMoodCheck:
+			{
 				const TSharedRef<FCondition_NpcMoodCheck> conditionNpcMoodCheck = StaticCastSharedRef<FCondition_NpcMoodCheck>(condition);
 				const bool result = ProcessNpcMoodCheck(_npcMoodData, conditionNpcMoodCheck);
 				if (!result) {
 					triggerFired = false;
 				}
 				break;
+			}
+			case ConditionTypes::NpcPositionCheck:
+			{
+				const TSharedRef<FCondition_NpcPositionCheck> conditionNpcPositionCheck = StaticCastSharedRef<FCondition_NpcPositionCheck>(condition);
+				const bool result = ProcessNpcPositionCheck(world, conditionNpcPositionCheck);
+				if (!result) {
+					triggerFired = false;
+				}
+				break;
+			}
 			}
 
 			if (!triggerFired) {
