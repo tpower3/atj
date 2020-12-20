@@ -12,7 +12,8 @@
 
 UENUM()
 enum ConditionTypes {
-	NpcMoodCheck UMETA(DisplayName = "NpcMoodCheck")
+	NpcMoodCheck UMETA(DisplayName = "NpcMoodCheck"),
+	NpcPositionCheck UMETA(DisplayName = "NpcPositionCheck")
 };
 
 USTRUCT(BlueprintType)
@@ -37,6 +38,21 @@ struct FCondition_NpcMoodCheck : public FCondition
 
 	UPROPERTY(BlueprintReadWrite)
 		FString value;
+};
+
+USTRUCT(BlueprintType)
+struct FCondition_NpcPositionCheck : public FCondition
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+		FString npc;
+
+	UPROPERTY(BlueprintReadWrite)
+		FString object;
+
+	UPROPERTY(BlueprintReadWrite)
+		FString distance;
 };
 
 USTRUCT(BlueprintType)
@@ -205,6 +221,7 @@ private:
 	void ParseScenario();
 
 	TSharedRef<FCondition> ParseConditionNpcMoodCheck(const FJsonObject& conditionObject) const;
+	TSharedRef<FCondition> ParseConditionNpcPositionCheck(const FJsonObject& conditionObject) const;
 	TSharedRef<FSignal> ParseSignalBindNpc(const FJsonObject& signalObject);
 	TSharedRef<FSignal> ParseSignalIncrementMood(const FJsonObject& signalObject);
 	TSharedRef<FSignal> ParseSignalObjectSetState(const FJsonObject& signalObject);

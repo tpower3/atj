@@ -27,6 +27,16 @@ TSharedRef<FCondition> AScenarioParser::ParseConditionNpcMoodCheck(const FJsonOb
 	return fCondition;
 }
 
+TSharedRef<FCondition> AScenarioParser::ParseConditionNpcPositionCheck(const FJsonObject& conditionObject) const
+{
+	TSharedRef<FCondition_NpcPositionCheck> fCondition = MakeShared<FCondition_NpcPositionCheck>();
+	fCondition->type = ConditionTypes::NpcPositionCheck;
+	fCondition->npc = conditionObject.GetStringField("npc");
+	fCondition->object = conditionObject.GetStringField("object");
+	fCondition->distance = conditionObject.GetStringField("distance");
+	return fCondition;
+}
+
 TSharedRef<FSignal> AScenarioParser::ParseSignalBindNpc(const FJsonObject& signalObject)
 {
 	TSharedRef<FSignal_BindNpc> fSignal = MakeShared<FSignal_BindNpc>();
@@ -130,6 +140,9 @@ void AScenarioParser::ParseScenario()
 				if (type == "npc_mood_check") {
 					TSharedRef<FCondition> fCondition = ParseConditionNpcMoodCheck(*conditionObject);
 					fTrigger.allOf.Add(fCondition);
+				} else if (type == "npc_position_check") {
+					TSharedRef<FCondition> fCondition = ParseConditionNpcPositionCheck(*conditionObject);
+					fTrigger.allOf.Add(fCondition);
 				}
 			}
 
@@ -230,6 +243,16 @@ void AScenarioParser::ParseScenario()
 						UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Npc: %s"), *(conditionCast->npc));
 						UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Check: %s"), *(conditionCast->check));
 						UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Value: %s"), *(conditionCast->value));
+
+						UE_LOG(LogTemp, Warning, TEXT("---"));
+					}
+					break;
+					case ConditionTypes::NpcPositionCheck:
+					{
+						const TSharedRef<FCondition_NpcPositionCheck> conditionCast = StaticCastSharedRef<FCondition_NpcPositionCheck>(condition);
+						UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Npc: %s"), *(conditionCast->npc));
+						UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Object: %s"), *(conditionCast->object));
+						UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Distance: %s"), *(conditionCast->distance));
 
 						UE_LOG(LogTemp, Warning, TEXT("---"));
 					}
