@@ -9,7 +9,7 @@
         "object_3",
         "object_4",
         "walk_away_object",
-		"position_check_object"
+        "position_check_object"
     ],
     "items": [
         "item_1"
@@ -29,7 +29,7 @@
                 "bind_zak_to_zak_walk_away_routine_action"
             ]
         },
-		{
+        {
             "name": "sara_in_position_trigger",
             "all_of": [
                 {
@@ -90,7 +90,7 @@
                 }
             ]
         },
-		{
+        {
             "name": "bind_sara_to_sara_walk_away_routine_action",
             "signals": [
                 {
@@ -208,7 +208,7 @@
                 }
             ]
         },
-		{
+        {
             "name": "sara_walk_away_routine",
             "tasks": [
                 {
