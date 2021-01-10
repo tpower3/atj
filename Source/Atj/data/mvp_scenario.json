@@ -47,7 +47,11 @@
                     "check": "GTorEQ",
                     "value": "3"
                 }
-            ], 
+            ],
+            "actions": [
+                "bind_zak_to_increment_mood_zak_action"
+                    "bind_zak_to_zak_scenario_win_routine"
+            ]
         }
     ],
     "actions": [
