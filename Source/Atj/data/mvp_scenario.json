@@ -46,11 +46,29 @@
                     "npc": "sara",
                     "check": "GTorEQ",
                     "value": "3"
+                },
+                {
+                    "type": "npc_mood_check",
+                    "npc": "zak",
+                    "check": "GTorEQ",
+                    "value": "2"
+                },
+                {
+                    "type": "npc_position_check",
+                    "npc": "sara",
+                    "object": "bulletin_board_1",
+                    "distance": "250"
+                },
+                {
+                    "type": "npc_position_check",
+                    "npc": "zak",
+                    "object": "bulletin_board_1",
+                    "distance": "250"
                 }
             ],
             "actions": [
-                "bind_zak_to_increment_mood_zak_action"
-                    "bind_zak_to_zak_scenario_win_routine"
+                "bind_zak_to_zak_scenario_win_routine_action", 
+                "bind_sara_to_sara_scenario_win_routine_action"
             ]
         }
     ],
@@ -297,6 +315,26 @@
                     "type": "increment_mood",
                     "npc": "zak",
                     "value": -1
+                }
+            ]
+        },
+        {
+            "name": "bind_zak_to_zak_scenario_win_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "zak",
+                    "routine": "zak_scenario_win_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_sara_to_sara_scenario_win_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "sara",
+                    "routine": "sara_scenario_win_routine"
                 }
             ]
         }
@@ -590,6 +628,28 @@
             ]
         },
         {
+            "name": "zak_scenario_win_routine",
+            "tasks": [
+                {
+                    "type": "increment_mood",
+                    "npc": "zak",
+                    "value": 1
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "0.1",
+                    "behavior": "move_to",
+                    "target": "break_room_table_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "40",
+                    "behavior": "move_to",
+                    "target": "meeting_room_chair_3"
+                }
+            ]
+        },
+        {
             "name": "morning_coffee_break_room_sara_routine",
             "tasks": [
                 {
@@ -690,6 +750,28 @@
                     "type": "execute_action",
                     "sync_time": "20.0",
                     "action": "decrement_mood_sara_action"
+                }
+            ]
+        },
+        {
+            "name": "sara_scenario_win_routine",
+            "tasks": [
+                {
+                    "type": "increment_mood",
+                    "npc": "sara",
+                    "value": 1
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "0.1",
+                    "behavior": "move_to",
+                    "target": "break_room_table_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "40.0",
+                    "behavior": "move_to",
+                    "target": "meeting_room_chair_1"
                 }
             ]
         },
