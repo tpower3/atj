@@ -41,6 +41,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Object")
 		void AttachItemActor(const AItemActor* item);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Object")
+		void GetAttachedItemName(FString& result);
+
 private:
 	FString _name;
 	FVector _interactLocation;

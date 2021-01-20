@@ -26,7 +26,6 @@
                 }
             ],
             "actions": [
-                "bind_zak_to_zak_walk_away_routine_action"
             ]
         },
         {
@@ -42,7 +41,20 @@
             "actions": [
                 "bind_sara_to_sara_walk_away_routine_action"
             ]
-        }
+        },
+		{
+			"name": "item_1_in_object_2_slot",
+            "all_of": [
+                {
+                    "type": "item_in_object_slot_check",
+                    "item": "item_1",
+                    "object": "object_2"
+                }
+            ],
+            "actions": [
+                "bind_zak_to_zak_walk_away_routine_action"
+            ]
+		}
     ],
     "actions": [
         {
