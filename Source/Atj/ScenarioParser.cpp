@@ -37,6 +37,15 @@ TSharedRef<FCondition> AScenarioParser::ParseConditionNpcPositionCheck(const FJs
 	return fCondition;
 }
 
+TSharedRef<FCondition> AScenarioParser::ParseConditionItemInObjectSlotCheck(const FJsonObject& conditionObject) const
+{
+	TSharedRef<FCondition_ItemInObjectSlotCheck> fCondition = MakeShared<FCondition_ItemInObjectSlotCheck>();
+	fCondition->type = ConditionTypes::ItemInObjectSlotCheck;
+	fCondition->item = conditionObject.GetStringField("item");
+	fCondition->object = conditionObject.GetStringField("object");
+	return fCondition;
+}
+
 TSharedRef<FSignal> AScenarioParser::ParseSignalBindNpc(const FJsonObject& signalObject)
 {
 	TSharedRef<FSignal_BindNpc> fSignal = MakeShared<FSignal_BindNpc>();
@@ -142,6 +151,9 @@ void AScenarioParser::ParseScenario()
 					fTrigger.allOf.Add(fCondition);
 				} else if (type == "npc_position_check") {
 					TSharedRef<FCondition> fCondition = ParseConditionNpcPositionCheck(*conditionObject);
+					fTrigger.allOf.Add(fCondition);
+				} else if (type == "item_in_object_slot_check") {
+					TSharedRef<FCondition> fCondition = ParseConditionItemInObjectSlotCheck(*conditionObject);
 					fTrigger.allOf.Add(fCondition);
 				}
 			}
@@ -253,6 +265,15 @@ void AScenarioParser::ParseScenario()
 						UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Npc: %s"), *(conditionCast->npc));
 						UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Object: %s"), *(conditionCast->object));
 						UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Distance: %s"), *(conditionCast->distance));
+
+						UE_LOG(LogTemp, Warning, TEXT("---"));
+					}
+					break;
+					case ConditionTypes::ItemInObjectSlotCheck:
+					{
+						const TSharedRef<FCondition_ItemInObjectSlotCheck> conditionCast = StaticCastSharedRef<FCondition_ItemInObjectSlotCheck>(condition);
+						UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Item: %s"), *(conditionCast->item));
+						UE_LOG(LogTemp, Warning, TEXT("Trigger Condition Object: %s"), *(conditionCast->object));
 
 						UE_LOG(LogTemp, Warning, TEXT("---"));
 					}

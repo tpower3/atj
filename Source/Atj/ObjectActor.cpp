@@ -49,3 +49,7 @@ void AObjectActor::SetObjectInteractLocation(const FVector& location) {
 void AObjectActor::AttachItemActor_Implementation(const AItemActor* item) {
 
 }
+
+void AObjectActor::GetAttachedItemName_Implementation(FString& result) {
+
+}

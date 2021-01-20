@@ -144,6 +144,26 @@ static bool ProcessNpcPositionCheck(UWorld* world, const TSharedRef<FCondition_N
 	return distance <= checkDistance;
 }
 
+static bool ProcessItemInObjectSlotCheck(UWorld* world, const TSharedRef<FCondition_ItemInObjectSlotCheck> conditionItemInObjectSlotCheck) {
+	AItemActor* itemActor = FindItemActor(world, conditionItemInObjectSlotCheck->item);
+	if (!itemActor) {
+		// TODO: Handle failed lookup
+		UE_LOG(LogTemp, Warning, TEXT("Failed to find: %s"), *(conditionItemInObjectSlotCheck->item));
+		return false;
+	}
+
+	AObjectActor* objectActor = FindObjectActor(world, conditionItemInObjectSlotCheck->object);
+	if (!objectActor) {
+		// TODO: Handle failed lookup
+		UE_LOG(LogTemp, Warning, TEXT("Failed to find actor in conditionItemInObjectSlotCheck: %s"), *(conditionItemInObjectSlotCheck->object));
+		return false;
+	}
+
+	FString result;
+	objectActor->GetAttachedItemName(result);
+	return conditionItemInObjectSlotCheck->item == result;
+}
+
 void AScenarioRunner::ProcessTriggers(UWorld* world, const FScenarioData& scenarioData) {
 	for (const auto& trigger : scenarioData.triggers) {
 		const bool previousTriggerState = _triggerState[trigger.Key];
@@ -163,6 +183,15 @@ void AScenarioRunner::ProcessTriggers(UWorld* world, const FScenarioData& scenar
 			{
 				const TSharedRef<FCondition_NpcPositionCheck> conditionNpcPositionCheck = StaticCastSharedRef<FCondition_NpcPositionCheck>(condition);
 				const bool result = ProcessNpcPositionCheck(world, conditionNpcPositionCheck);
+				if (!result) {
+					triggerFired = false;
+				}
+				break;
+			}
+			case ConditionTypes::ItemInObjectSlotCheck:
+			{
+				const TSharedRef<FCondition_ItemInObjectSlotCheck> conditionItemInObjectSlotCheck = StaticCastSharedRef<FCondition_ItemInObjectSlotCheck>(condition);
+				const bool result = ProcessItemInObjectSlotCheck(world, conditionItemInObjectSlotCheck);
 				if (!result) {
 					triggerFired = false;
 				}
