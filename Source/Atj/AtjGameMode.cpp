@@ -11,7 +11,7 @@ AAtjGameMode::AAtjGameMode()
 	PlayerControllerClass = AAtjPlayerController::StaticClass();
 
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/NpcCharacters/NpcCharacterBp"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/NpcCharacters/NpcCharacterBp_Player"));
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
