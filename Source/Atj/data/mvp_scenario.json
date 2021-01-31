@@ -64,6 +64,11 @@
                     "npc": "zak",
                     "object": "bulletin_board_1",
                     "distance": "250"
+                },
+                {
+                    "type": "item_in_object_slot_check",
+                    "item": "hacky_sack_club_flyer_1",
+                    "object": "bulletin_board_1"
                 }
             ],
             "actions": [
