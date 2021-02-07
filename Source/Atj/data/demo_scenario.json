@@ -52,7 +52,7 @@
                 }
             ],
             "actions": [
-                "bind_zak_to_zak_walk_away_routine_action"
+                "end_game_failure_action"
             ]
 		}
     ],
@@ -119,6 +119,22 @@
                     "type": "increment_mood",
                     "npc": "zak",
                     "value": -1
+                }
+            ]
+        },
+		{
+            "name": "end_game_failure_action",
+            "signals": [
+                {
+                    "type": "end_game_failure"
+                }
+            ]
+        },
+		{
+            "name": "end_game_success_action",
+            "signals": [
+                {
+                    "type": "end_game_success"
                 }
             ]
         },

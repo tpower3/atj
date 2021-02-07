@@ -17,3 +17,13 @@ AAtjGameMode::AAtjGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 }
+
+void AAtjGameMode::OnEndGameFailure_Implementation()
+{
+
+}
+
+void AAtjGameMode::OnEndGameSuccess_Implementation()
+{
+
+}

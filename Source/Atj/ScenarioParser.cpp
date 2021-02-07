@@ -55,6 +55,20 @@ TSharedRef<FSignal> AScenarioParser::ParseSignalBindNpc(const FJsonObject& signa
 	return fSignal;
 }
 
+TSharedRef<FSignal> AScenarioParser::ParseSignalEndGameFailure(const FJsonObject& signalObject)
+{
+	TSharedRef<FSignal_EndGameFailure> fSignal = MakeShared<FSignal_EndGameFailure>();
+	fSignal->type = SignalTypes::EndGameFailure;
+	return fSignal;
+}
+
+TSharedRef<FSignal> AScenarioParser::ParseSignalEndGameSuccess(const FJsonObject& signalObject)
+{
+	TSharedRef<FSignal_EndGameSuccess> fSignal = MakeShared<FSignal_EndGameSuccess>();
+	fSignal->type = SignalTypes::EndGameSuccess;
+	return fSignal;
+}
+
 TSharedRef<FSignal> AScenarioParser::ParseSignalIncrementMood(const FJsonObject& signalObject)
 {
 	TSharedRef<FSignal_IncrementMood> fSignal = MakeShared<FSignal_IncrementMood>();
@@ -188,6 +202,12 @@ void AScenarioParser::ParseScenario()
 				if (type == "bind_npc") {
 					TSharedRef<FSignal> fSignal = ParseSignalBindNpc(*signalObject);
 					fAction.signals.Add(fSignal);
+				} else if (type == "end_game_failure") {
+					TSharedRef<FSignal> fSignal = ParseSignalEndGameFailure(*signalObject);
+					fAction.signals.Add(fSignal);
+				} else if (type == "end_game_success") {
+					TSharedRef<FSignal> fSignal = ParseSignalEndGameSuccess(*signalObject);
+					fAction.signals.Add(fSignal);
 				} else if (type == "increment_mood") {
 					TSharedRef<FSignal> fSignal = ParseSignalIncrementMood(*signalObject);
 					fAction.signals.Add(fSignal);
@@ -298,7 +318,19 @@ void AScenarioParser::ParseScenario()
 					UE_LOG(LogTemp, Warning, TEXT("Action Signal Routine: %s"), *(signalCast->routine));
 					UE_LOG(LogTemp, Warning, TEXT("---"));
 				}
-					break;
+				break;
+				case SignalTypes::EndGameFailure:
+				{
+					const TSharedRef<FSignal_EndGameFailure> signalCast = StaticCastSharedRef<FSignal_EndGameFailure>(signal);
+					UE_LOG(LogTemp, Warning, TEXT("---"));
+				}
+				break;
+				case SignalTypes::EndGameSuccess:
+				{
+					const TSharedRef<FSignal_EndGameSuccess> signalCast = StaticCastSharedRef<FSignal_EndGameSuccess>(signal);
+					UE_LOG(LogTemp, Warning, TEXT("---"));
+				}
+				break;
 				case SignalTypes::IncrementMood:
 				{
 					const TSharedRef<FSignal_IncrementMood> signalCast = StaticCastSharedRef<FSignal_IncrementMood>(signal);
