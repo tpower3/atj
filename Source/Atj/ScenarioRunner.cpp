@@ -8,6 +8,7 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 
+#include "AtjGameMode.h"
 #include "ItemActor.h"
 #include "ObjectActor.h"
 
@@ -207,7 +208,7 @@ void AScenarioRunner::ProcessTriggers(UWorld* world, const FScenarioData& scenar
 			UE_LOG(LogTemp, Warning, TEXT("Trigger fired"));
 			for (const auto& action : trigger.Value.actions) {
 				UE_LOG(LogTemp, Warning, TEXT("ProcessAction: %s"), *(action));
-				ProcessAction(scenarioData, action, GetWorld()->GetTimeSeconds());
+				ProcessAction(world, scenarioData, action, world->GetTimeSeconds());
 			}
 		}
 		_triggerState[trigger.Key] = triggerFired;
@@ -296,7 +297,7 @@ void AScenarioRunner::ProcessNpcBindings(UWorld* world, const FScenarioData& sce
 			case TaskTypes::ExecuteAction:
 			{
 				const TSharedRef<FTask_ExecuteAction> taskExecuteAction = StaticCastSharedRef<FTask_ExecuteAction>(task);
-				ProcessAction(scenarioData, taskExecuteAction->action, GetWorld()->GetTimeSeconds());
+				ProcessAction(world, scenarioData, taskExecuteAction->action, world->GetTimeSeconds());
 				break;
 			}
 			}
@@ -305,7 +306,7 @@ void AScenarioRunner::ProcessNpcBindings(UWorld* world, const FScenarioData& sce
 	_previousTickGameTime = currentTime;
 }
 
-void AScenarioRunner::ProcessAction(const FScenarioData& scenarioData, FString actionName, float startTime) {
+void AScenarioRunner::ProcessAction(UWorld* world, const FScenarioData& scenarioData, FString actionName, float startTime) {
 	FAction action = scenarioData.actions[actionName];
 	for (const auto& signal : action.signals) {
 		switch (signal->type) {
@@ -322,7 +323,19 @@ void AScenarioRunner::ProcessAction(const FScenarioData& scenarioData, FString a
 
 			_npcBindingsQueue.Add(npcName, npcBindingData);
 		}
-			break;
+		break;
+		case SignalTypes::EndGameFailure:
+		{
+			AAtjGameMode* gameMode = StaticCast<AAtjGameMode*>(world->GetAuthGameMode());
+			gameMode->OnEndGameFailure();
+		}
+		break;
+		case SignalTypes::EndGameSuccess:
+		{
+			AAtjGameMode* gameMode = StaticCast<AAtjGameMode*>(world->GetAuthGameMode());
+			gameMode->OnEndGameSuccess();
+		}
+		break;
 		case SignalTypes::IncrementMood:
 		{
 			const TSharedRef<FSignal_IncrementMood> signalIncrementMood = StaticCastSharedRef<FSignal_IncrementMood>(signal);
@@ -362,6 +375,6 @@ void AScenarioRunner::SetScenarioData(const FScenarioData& data) {
 		_triggerState.Add(trigger.Key, false);
 	}
 	if (data.actions.Contains("simulation_start")) {
-		ProcessAction(data, "simulation_start", GetWorld()->GetTimeSeconds());
+		ProcessAction(GetWorld(), data, "simulation_start", GetWorld()->GetTimeSeconds());
 	}
 }

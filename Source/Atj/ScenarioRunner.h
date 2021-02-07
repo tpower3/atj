@@ -57,7 +57,7 @@ public:
 private:
 	void InitScene();
 
-	void ProcessAction(const FScenarioData& scenarioData, FString actionName, float startTime);
+	void ProcessAction(UWorld* world, const FScenarioData& scenarioData, FString actionName, float startTime);
 	void ProcessNpcBindings(UWorld* world, const FScenarioData& data, const TMap<FString, FNpcBindingData>& npcBindings, float currentTime);
 	void ProcessTriggers(UWorld* world, const FScenarioData& scenarioData);
 

@@ -83,6 +83,8 @@ struct FTrigger
 UENUM()
 enum SignalTypes {
 	BindNpc UMETA(DisplayName = "BindNpc"),
+	EndGameFailure UMETA(DisplayName = "EndGameFailure"),
+	EndGameSuccess UMETA(DisplayName = "EndGameSuccess"),
 	IncrementMood UMETA(DisplayName = "IncrementMood"),
 	ObjectSetState UMETA(DisplayName = "ObjectSetState")
 };
@@ -106,6 +108,19 @@ struct FSignal_BindNpc : public FSignal
 
 	UPROPERTY(BlueprintReadWrite)
 		FString routine;
+};
+
+
+USTRUCT(BlueprintType)
+struct FSignal_EndGameFailure : public FSignal
+{
+	GENERATED_USTRUCT_BODY()
+};
+
+USTRUCT(BlueprintType)
+struct FSignal_EndGameSuccess : public FSignal
+{
+	GENERATED_USTRUCT_BODY()
 };
 
 USTRUCT(BlueprintType)
@@ -237,6 +252,8 @@ private:
 	TSharedRef<FCondition> ParseConditionNpcPositionCheck(const FJsonObject& conditionObject) const;
 	TSharedRef<FCondition> ParseConditionItemInObjectSlotCheck(const FJsonObject& conditionObject) const;
 	TSharedRef<FSignal> ParseSignalBindNpc(const FJsonObject& signalObject);
+	TSharedRef<FSignal> ParseSignalEndGameFailure(const FJsonObject& signalObject);
+	TSharedRef<FSignal> ParseSignalEndGameSuccess(const FJsonObject& signalObject);
 	TSharedRef<FSignal> ParseSignalIncrementMood(const FJsonObject& signalObject);
 	TSharedRef<FSignal> ParseSignalObjectSetState(const FJsonObject& signalObject);
 

@@ -13,6 +13,12 @@ class AAtjGameMode : public AGameModeBase
 
 public:
 	AAtjGameMode();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Simulator")
+		void OnEndGameFailure();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Simulator")
+		void OnEndGameSuccess();
 };
 
 
