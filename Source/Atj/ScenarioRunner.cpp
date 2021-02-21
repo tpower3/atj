@@ -125,15 +125,13 @@ static bool ProcessNpcMoodCheck(const TMap<FString, int>& npcMoodData, const TSh
 static bool ProcessNpcPositionCheck(UWorld* world, const TSharedRef<FCondition_NpcPositionCheck> conditionNpcPositionCheck) {
 	ANpcCharacter* npcCharacter = FindNpcCharacter(world, conditionNpcPositionCheck->npc);
 	if (!npcCharacter) {
-		// TODO: Handle failed lookup
-		UE_LOG(LogTemp, Warning, TEXT("Failed to find: %s"), *(conditionNpcPositionCheck->npc));
+		UE_LOG(LogTemp, Error, TEXT("Npc does not exist: %s"), *(conditionNpcPositionCheck->npc));
 		return false;
 	}
 
 	AObjectActor* targetActor = FindObjectActor(world, conditionNpcPositionCheck->object);
 	if (!targetActor) {
-		// TODO: Handle failed lookup
-		UE_LOG(LogTemp, Warning, TEXT("Failed to find actor in ProcessNpcPositionCheck: %s"), *(conditionNpcPositionCheck->object));
+		UE_LOG(LogTemp, Error, TEXT("ObjectActor does not exist: %s"), *(conditionNpcPositionCheck->object));
 		return false;
 	}
 
@@ -148,15 +146,13 @@ static bool ProcessNpcPositionCheck(UWorld* world, const TSharedRef<FCondition_N
 static bool ProcessItemInObjectSlotCheck(UWorld* world, const TSharedRef<FCondition_ItemInObjectSlotCheck> conditionItemInObjectSlotCheck) {
 	AItemActor* itemActor = FindItemActor(world, conditionItemInObjectSlotCheck->item);
 	if (!itemActor) {
-		// TODO: Handle failed lookup
-		UE_LOG(LogTemp, Warning, TEXT("Failed to find: %s"), *(conditionItemInObjectSlotCheck->item));
+		UE_LOG(LogTemp, Error, TEXT("Item does not exist: %s"), *(conditionItemInObjectSlotCheck->item));
 		return false;
 	}
 
 	AObjectActor* objectActor = FindObjectActor(world, conditionItemInObjectSlotCheck->object);
 	if (!objectActor) {
-		// TODO: Handle failed lookup
-		UE_LOG(LogTemp, Warning, TEXT("Failed to find actor in conditionItemInObjectSlotCheck: %s"), *(conditionItemInObjectSlotCheck->object));
+		UE_LOG(LogTemp, Error, TEXT("ObjectActor does not exist: %s"), *(conditionItemInObjectSlotCheck->object));
 		return false;
 	}
 
@@ -228,6 +224,9 @@ void AScenarioRunner::ProcessNpcBindings(UWorld* world, const FScenarioData& sce
 		for (const auto& task : routine.tasks) {
 			float syncTime;
 			FDefaultValueHelper::ParseFloat(task->sync_time, syncTime);
+			if (syncTime == 0.0) {
+				UE_LOG(LogTemp, Error, TEXT("Npc `%s` with routine `%s` has task with SyncTime of 0.0. This is unsupported."), *npcName, *npcBindingData.routineName);
+			}
 			accumulatedSyncTime += syncTime;
 			if ((_previousTickGameTime - startTime) <= accumulatedSyncTime) {
 				break;
@@ -256,8 +255,7 @@ void AScenarioRunner::ProcessNpcBindings(UWorld* world, const FScenarioData& sce
 
 				ANpcCharacter* npcCharacter = FindNpcCharacter(world, npcName);
 				if (!npcCharacter) {
-					// TODO: Handle failed lookup
-					UE_LOG(LogTemp, Warning, TEXT("Failed to find: %s"), *(npcName));
+					UE_LOG(LogTemp, Error, TEXT("Npc does not exist: %s"), *(npcName));
 					continue;
 				}
 
@@ -266,8 +264,7 @@ void AScenarioRunner::ProcessNpcBindings(UWorld* world, const FScenarioData& sce
 
 					AObjectActor* targetActor = FindObjectActor(world, targetName);
 					if (!targetActor) {
-						// TODO: Handle failed lookup
-						UE_LOG(LogTemp, Warning, TEXT("Failed to find for 'move_to' behavior: %s"), *(targetName));
+						UE_LOG(LogTemp, Error, TEXT("Failed '%s' 'move_to'. %s does not exist."), *(npcName), *(targetName));
 						continue;
 					}
 					npcCharacter->RoutineMoveTo(targetActor);
@@ -276,8 +273,7 @@ void AScenarioRunner::ProcessNpcBindings(UWorld* world, const FScenarioData& sce
 					const auto targetName = taskBehavior->target;
 					AItemActor* targetActor = FindItemActor(world, targetName);
 					if (!targetActor) {
-						// TODO: Handle failed lookup
-						UE_LOG(LogTemp, Warning, TEXT("Failed to find for 'pick_up' behavior: %s"), *(targetName));
+						UE_LOG(LogTemp, Error, TEXT("Failed '%s' 'pick_up'. %s does not exist."), *(npcName), *(targetName));
 						continue;
 					}
 					npcCharacter->PickUp(targetActor);
@@ -286,8 +282,7 @@ void AScenarioRunner::ProcessNpcBindings(UWorld* world, const FScenarioData& sce
 					const auto targetName = taskBehavior->target;
 					AObjectActor* targetActor = FindObjectActor(world, targetName);
 					if (!targetActor) {
-						// TODO: Handle failed lookup
-						UE_LOG(LogTemp, Warning, TEXT("Failed to find for 'put_down' behavior: %s"), *(targetName));
+						UE_LOG(LogTemp, Error, TEXT("Failed '%s' 'put_down'. %s does not exist."), *(npcName), *(targetName));
 						continue;
 					}
 					npcCharacter->PutDown(targetActor);
@@ -346,8 +341,7 @@ void AScenarioRunner::ProcessAction(UWorld* world, const FScenarioData& scenario
 
 			const auto iter = _npcMoodData.Find(npcName);
 			if (nullptr == iter) {
-				UE_LOG(LogTemp, Warning, TEXT("IncrementMood npc lookup error: %s"), *(npcName));
-				// TODO: Handle error
+				UE_LOG(LogTemp, Error, TEXT("Npc does not exist: %s"), *(npcName));
 				return;
 			}
 
@@ -358,8 +352,7 @@ void AScenarioRunner::ProcessAction(UWorld* world, const FScenarioData& scenario
 		}
 		break;
 		default:
-			// TODO: Handle undefined type
-			UE_LOG(LogTemp, Warning, TEXT("undefined"));
+			UE_LOG(LogTemp, Error, TEXT("Undefined SignalType"));
 			break;
 		}
 	}

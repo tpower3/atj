@@ -59,7 +59,15 @@ void ANpcCharacter::SetName(const FString& name) {
 }
 
 void ANpcCharacter::RoutineMoveTo(AObjectActor* objectActor) {
+	if (nullptr == objectActor) {
+		UE_LOG(LogTemp, Error, TEXT("Null objectActor"));
+		return;
+	}
 	FVector location = objectActor->GetObjectInteractLocation();
 	ANpcAiController* aiController = Cast<ANpcAiController>(GetController());
+	if (nullptr == aiController) {
+		UE_LOG(LogTemp, Error, TEXT("Failed to cast to NpcAiController"));
+		return;
+	}
 	aiController->MoveToLocation(location);
 }
