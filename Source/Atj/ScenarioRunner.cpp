@@ -371,3 +371,24 @@ void AScenarioRunner::SetScenarioData(const FScenarioData& data) {
 		ProcessAction(GetWorld(), data, "simulation_start", GetWorld()->GetTimeSeconds());
 	}
 }
+
+
+FDebugInfo AScenarioRunner::getDebugInfo() const {
+	FDebugInfo debugInfo;
+	for (const auto& npcBindingData : _npcBindings) {
+		FDebugNpcData debugNpcData;
+		debugNpcData.npcName = npcBindingData.Key;
+		debugNpcData.routineName = npcBindingData.Value.routineName;
+		debugNpcData.routineStartTime = npcBindingData.Value.startTime;
+		debugNpcData.currentTime = GetWorld()->GetTimeSeconds();
+
+		const bool hasMoodData = _npcMoodData.Contains(npcBindingData.Key);
+		debugNpcData.mood = hasMoodData ? _npcMoodData[npcBindingData.Key] : -1;
+
+		debugInfo.npcData.Add(debugNpcData);
+	}
+
+	debugInfo.triggerData = _triggerState;
+
+	return debugInfo;
+}

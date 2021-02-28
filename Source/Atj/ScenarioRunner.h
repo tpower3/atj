@@ -19,6 +19,41 @@ struct FNpcBindingData
 	float startTime;
 };
 
+USTRUCT(BlueprintType)
+struct FDebugNpcData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+		FString npcName;
+	
+	UPROPERTY(BlueprintReadWrite)
+		FString routineName;
+
+	UPROPERTY(BlueprintReadWrite)
+		float routineStartTime;
+
+	UPROPERTY(BlueprintReadWrite)
+		float currentTime;
+
+	UPROPERTY(BlueprintReadWrite)
+		int mood;
+
+};
+
+USTRUCT(BlueprintType)
+struct FDebugInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+		TArray<FDebugNpcData> npcData;
+
+	UPROPERTY(BlueprintReadWrite)
+		TMap<FString, bool> triggerData;
+
+};
+
 UCLASS()
 class ATJ_API AScenarioRunner : public AActor
 {
@@ -53,6 +88,9 @@ public:
 		TMap<FString, bool> getTriggerState() const {
 		return _triggerState;
 	}
+
+	UFUNCTION(BlueprintCallable, Category = "Simulator")
+		FDebugInfo getDebugInfo() const;
 
 private:
 	void InitScene();
