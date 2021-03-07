@@ -372,7 +372,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "mens_bathroom_toilet_1"
                 },
@@ -389,7 +389,7 @@
                 },
                 {
                     "type": "execute_action",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "action": "bind_juan_to_printer_1_routine_action"
                 }
             ]
@@ -399,7 +399,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "printer_1"
                 },
@@ -423,7 +423,7 @@
                 },
                 {
                     "type": "execute_action",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "action": "bind_juan_to_refrigerator_1_routine_action"
                 }
             ]
@@ -435,7 +435,7 @@
                     "type": "behavior",
                     "sync_time": "0.1",
                     "behavior": "move_to",
-                    "target": "refrigerator_1_routine"
+                    "target": "refrigerator_1"
                 },
                 {
                     "type": "behavior",
@@ -460,7 +460,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "meeting_room_table_1"
                 },
@@ -495,7 +495,7 @@
                 },
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "reception_desk_1"
                 },
@@ -516,7 +516,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "break_room_table_1"
                 },
@@ -566,7 +566,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "zaks_desk_1"
                 },
@@ -588,7 +588,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "bulletin_board_1"
                 },
@@ -609,7 +609,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "reception_desk_1"
                 },
@@ -665,7 +665,7 @@
                 },
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "coffee_maker_1"
                 },
@@ -679,13 +679,13 @@
                     "type": "behavior",
                     "sync_time": "30.0",
                     "behavior": "move_to",
-                    "target": "break_room_sink_1"
+                    "target": "break_room_table_1"
                 },
                 {
                     "type": "behavior",
                     "sync_time": "1.0",
                     "behavior": "put_down",
-                    "target": "break_room_sink_1"
+                    "target": "break_room_table_1"
                 },
                 {
                     "type": "execute_action",
@@ -699,7 +699,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "saras_desk_1"
                 },
@@ -715,7 +715,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "bulletin_board_1"
                 },
@@ -731,7 +731,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "ladys_bathroom_toilet_1"
                 },
@@ -747,7 +747,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "meeting_room_chair_1"
                 },
@@ -785,7 +785,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "refrigerator_1"
                 },
@@ -807,7 +807,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "storage_cabinet_1"
                 },
@@ -829,7 +829,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "zaks_desk_1"
                 },
@@ -851,7 +851,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "copier_1"
                 },
@@ -867,7 +867,7 @@
             "tasks": [
                 {
                     "type": "behavior",
-                    "sync_time": "0.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "bulletin_board_1"
                 },
