@@ -506,7 +506,7 @@
                 },
                 {
                     "type": "execute_action",
-                    "sync_time": "40.0",
+                    "sync_time": "30.0",
                     "action": "bind_zak_to_break_room_eat_breakfast_routine_action"
                 }
             ]
@@ -522,25 +522,25 @@
                 },
                 {
                     "type": "behavior",
-                    "sync_time": "1.0",
+                    "sync_time": "20.0",
                     "behavior": "put_down",
                     "target": "break_room_table_1"
                 },
                 {
                     "type": "behavior",
-                    "sync_time": "20.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "refrigerator_1"
                 },
                 {
                     "type": "behavior",
-                    "sync_time": "0.1",
+                    "sync_time": "20.0",
                     "behavior": "pick_up",
                     "target": "zaks_breakfast_1"
                 },
                 {
                     "type": "behavior",
-                    "sync_time": "20.0",
+                    "sync_time": "0.1",
                     "behavior": "move_to",
                     "target": "microwave_1"
                 },
@@ -578,7 +578,7 @@
                 },
                 {
                     "type": "execute_action",
-                    "sync_time": "30.0",
+                    "sync_time": "10.0",
                     "action": "bind_zak_to_zak_move_to_bulletin_board_1_routine_action"
                 }
             ]
@@ -594,7 +594,7 @@
                 },
                 {
                     "type": "execute_action",
-                    "sync_time": "0.1",
+                    "sync_time": "10.0",
                     "action": "decrement_mood_zak_action"
                 },
                 {
@@ -627,7 +627,7 @@
                 },
                 {
                     "type": "execute_action",
-                    "sync_time": "10.0",
+                    "sync_time": "20.0",
                     "action": "decrement_mood_zak_action"
                 }
             ]
@@ -671,7 +671,7 @@
                 },
                 {
                     "type": "behavior",
-                    "sync_time": "30.0",
+                    "sync_time": "50.0",
                     "behavior": "move_to",
                     "target": "break_room_chair_1"
                 },
@@ -683,13 +683,13 @@
                 },
                 {
                     "type": "behavior",
-                    "sync_time": "1.0",
+                    "sync_time": "0.1",
                     "behavior": "put_down",
                     "target": "break_room_table_1"
                 },
                 {
                     "type": "execute_action",
-                    "sync_time": "30.0",
+                    "sync_time": "20.0",
                     "action": "bind_sara_to_sara_morning_desk_routine_action"
                 }
             ]
