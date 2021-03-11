@@ -209,6 +209,9 @@ struct FScenarioData
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(BlueprintReadWrite)
+		bool isDebugMode = false;
+
+	UPROPERTY(BlueprintReadWrite)
 		TArray<FString> npcs;
 
 	UPROPERTY(BlueprintReadWrite)

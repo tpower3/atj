@@ -128,6 +128,11 @@ void AScenarioParser::ParseScenario()
 	if (FJsonSerializer::Deserialize(JsonReader, JsonObject) &&
 		JsonObject.IsValid())
 	{
+		// Parse debug mode
+		bool isDebugMode;
+		JsonObject->TryGetBoolField("isDebugMode", isDebugMode);
+		scenarioData.isDebugMode = isDebugMode;
+
 		// Parse npcs
 		TArray<TSharedPtr<FJsonValue>> npcs = JsonObject->GetArrayField("npcs");
 		for (int32 i = 0; i < npcs.Num(); i++)

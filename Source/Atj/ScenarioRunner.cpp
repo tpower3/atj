@@ -311,6 +311,11 @@ void AScenarioRunner::ProcessAction(UWorld* world, const FScenarioData& scenario
 			FString routineName = signalBindNpc->routine;
 			FString npcName = signalBindNpc->npc;
 
+			if (!isDebugEnabled() && npcName == "player") {
+				// Skip processing player if debug mode is not enabled
+				continue;
+			}
+
 			// TODO: Data structure to hold all metadata
 			FNpcBindingData npcBindingData;
 			npcBindingData.routineName = routineName;
@@ -391,4 +396,11 @@ FDebugInfo AScenarioRunner::getDebugInfo() const {
 	debugInfo.triggerData = _triggerState;
 
 	return debugInfo;
+}
+
+bool AScenarioRunner::isDebugEnabled() const {
+	if (_scenarioData.IsSet()) {
+		return _scenarioData.GetValue().isDebugMode;
+	}
+	return false;
 }

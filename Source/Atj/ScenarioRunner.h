@@ -92,6 +92,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Simulator")
 		FDebugInfo getDebugInfo() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Simulator")
+		bool isDebugEnabled() const;
+
 private:
 	void InitScene();
 
