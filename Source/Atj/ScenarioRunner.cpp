@@ -346,8 +346,8 @@ void AScenarioRunner::ProcessAction(UWorld* world, const FScenarioData& scenario
 			}
 
 			// Increment the Npc Mood by the desired value, clamping the final result
-			constexpr int MIN_MOOD_VALUE = 0;
-			constexpr int MAX_MOOD_VALUE = 5;
+			constexpr int MIN_MOOD_VALUE = 1;
+			constexpr int MAX_MOOD_VALUE = 4;
 			*iter = FMath::Clamp(*iter + value, MIN_MOOD_VALUE, MAX_MOOD_VALUE);
 		}
 		break;
