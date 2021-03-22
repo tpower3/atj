@@ -1,4 +1,5 @@
 {
+    "isDebugMode": true,
     "npcs": [
         "juan",
         "zak",
@@ -29,12 +30,12 @@
         "copier_1"
     ],
     "items": [
-        "crossword_puzzle_1", 
+        "crossword_puzzle_1",
         "big_meeting_agenda_1",
         "meeting_food_1",
-        "hacky_sack_1", 
-        "zaks_breakfast_1", 
-        "saras_coffee_cup_1", 
+        "hacky_sack_1",
+        "zaks_breakfast_1",
+        "saras_coffee_cup_1",
         "hacky_sack_club_flyer_1"
     ],
     "triggers": [
@@ -72,7 +73,7 @@
                 }
             ],
             "actions": [
-                "bind_zak_to_zak_scenario_win_routine_action", 
+                "bind_zak_to_zak_scenario_win_routine_action",
                 "bind_sara_to_sara_scenario_win_routine_action"
             ]
         }
