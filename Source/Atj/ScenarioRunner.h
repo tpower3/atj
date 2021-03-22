@@ -17,6 +17,8 @@ struct FNpcBindingData
 	FString routineName;
 
 	float startTime;
+
+	int currentTaskIdx = -1;
 };
 
 USTRUCT(BlueprintType)
@@ -29,6 +31,9 @@ struct FDebugNpcData
 	
 	UPROPERTY(BlueprintReadWrite)
 		FString routineName;
+
+	UPROPERTY(BlueprintReadWrite)
+		FString taskData;
 
 	UPROPERTY(BlueprintReadWrite)
 		float routineStartTime;
@@ -99,7 +104,7 @@ private:
 	void InitScene();
 
 	void ProcessAction(UWorld* world, const FScenarioData& scenarioData, FString actionName, float startTime);
-	void ProcessNpcBindings(UWorld* world, const FScenarioData& data, const TMap<FString, FNpcBindingData>& npcBindings, float currentTime);
+	void ProcessNpcBindings(UWorld* world, const FScenarioData& data, TMap<FString, FNpcBindingData>& npcBindings, float currentTime);
 	void ProcessTriggers(UWorld* world, const FScenarioData& scenarioData);
 
 	TOptional<FScenarioData> _scenarioData;
