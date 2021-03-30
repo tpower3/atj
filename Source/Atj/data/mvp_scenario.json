@@ -393,6 +393,14 @@
                     "type": "end_game_failure"
                 }
             ]
+        },
+        {
+            "name": "end_game_success_action",
+            "signals": [
+                {
+                    "type": "end_game_success"
+                }
+            ]
         }
     ],
     "routines": [
@@ -702,6 +710,11 @@
                     "sync_time": "40",
                     "behavior": "move_to",
                     "target": "meeting_room_chair_3"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.1",
+                    "action": "end_game_success_action"
                 }
             ]
         },
@@ -828,6 +841,11 @@
                     "sync_time": "40.0",
                     "behavior": "move_to",
                     "target": "meeting_room_chair_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.1",
+                    "action": "end_game_success_action"
                 }
             ]
         },
