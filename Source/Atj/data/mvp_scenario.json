@@ -76,6 +76,48 @@
                 "bind_zak_to_zak_scenario_win_routine_action",
                 "bind_sara_to_sara_scenario_win_routine_action"
             ]
+        },
+        {
+            "name": "end_game_failure_sara",
+            "all_of": [
+                {
+                    "type": "npc_mood_check",
+                    "npc": "sara",
+                    "check": "EQ",
+                    "value": "1"
+                }
+            ],
+            "actions": [
+                "end_game_failure_action"
+            ]
+        },
+        {
+            "name": "end_game_failure_zak",
+            "all_of": [
+                {
+                    "type": "npc_mood_check",
+                    "npc": "zak",
+                    "check": "EQ",
+                    "value": "1"
+                }
+            ],
+            "actions": [
+                "end_game_failure_action"
+            ]
+        },
+        {
+            "name": "end_game_failure_juan",
+            "all_of": [
+                {
+                    "type": "npc_mood_check",
+                    "npc": "juan",
+                    "check": "EQ",
+                    "value": "1"
+                }
+            ],
+            "actions": [
+                "end_game_failure_action"
+            ]
         }
     ],
     "actions": [
@@ -341,6 +383,14 @@
                     "type": "bind_npc",
                     "npc": "sara",
                     "routine": "sara_scenario_win_routine"
+                }
+            ]
+        },
+        {
+            "name": "end_game_failure_action",
+            "signals": [
+                {
+                    "type": "end_game_failure"
                 }
             ]
         }
