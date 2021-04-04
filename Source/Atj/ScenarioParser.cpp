@@ -97,6 +97,17 @@ static TSharedRef<FTask> ParseTaskBehavior(const FJsonObject& taskObject)
 	return fTask;
 }
 
+static TSharedRef<FTask> ParseTaskEvaluateTrigger(const FJsonObject& taskObject)
+{
+	TSharedRef<FTask_EvaluateTrigger> fTask = MakeShared<FTask_EvaluateTrigger>();
+	fTask->type = TaskTypes::EvaluateTrigger;
+	fTask->sync_time = taskObject.GetStringField("sync_time");
+	fTask->trigger = taskObject.GetStringField("trigger");
+	fTask->pass_action = taskObject.GetStringField("pass_action");
+	fTask->fail_action = taskObject.GetStringField("fail_action");
+	return fTask;
+}
+
 static TSharedRef<FTask> ParseTaskExecuteAction(const FJsonObject& taskObject)
 {
 	TSharedRef<FTask_ExecuteAction> fTask = MakeShared<FTask_ExecuteAction>();
@@ -158,6 +169,9 @@ void AScenarioParser::ParseScenario()
 			UE_LOG(LogTemp, Warning, TEXT("DEBUG Trigger: %s"), *(triggerName));
 
 			FTrigger fTrigger;
+
+			const bool alwaysEvaluate = triggerObject->GetBoolField("always_evaluate");
+			fTrigger.alwaysEvaluate = alwaysEvaluate;
 
 			// Parse conditions
 			const auto all_of_conditions = triggerObject->GetArrayField("all_of");
@@ -244,6 +258,10 @@ void AScenarioParser::ParseScenario()
 				const auto type = taskObject->GetStringField("type");
 				if (type == "behavior") {
 					TSharedRef<FTask> fTask = ParseTaskBehavior(*taskObject);
+					fRoutine.tasks.Add(fTask);
+				}
+				else if (type == "evaluate_trigger") {
+					TSharedRef<FTask> fTask = ParseTaskEvaluateTrigger(*taskObject);
 					fRoutine.tasks.Add(fTask);
 				}
 				else if (type == "execute_action") {
@@ -368,6 +386,14 @@ void AScenarioParser::ParseScenario()
 					const TSharedRef<FTask_Behavior> taskCast = StaticCastSharedRef<FTask_Behavior>(task);
 					UE_LOG(LogTemp, Warning, TEXT("Routine Task Behavior: %s"), *(taskCast->behavior));
 					UE_LOG(LogTemp, Warning, TEXT("Routine Task Target: %s"), *(taskCast->target));
+				}
+				break;
+				case TaskTypes::EvaluateTrigger:
+				{
+					const TSharedRef<FTask_EvaluateTrigger> taskCast = StaticCastSharedRef<FTask_EvaluateTrigger>(task);
+					UE_LOG(LogTemp, Warning, TEXT("Routine Task Trigger: %s"), *(taskCast->trigger));
+					UE_LOG(LogTemp, Warning, TEXT("Routine Task pass_action: %s"), *(taskCast->pass_action));
+					UE_LOG(LogTemp, Warning, TEXT("Routine Task fail_action: %s"), *(taskCast->fail_action));
 				}
 				break;
 				case TaskTypes::ExecuteAction:
