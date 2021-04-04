@@ -161,45 +161,49 @@ static bool ProcessItemInObjectSlotCheck(UWorld* world, const TSharedRef<FCondit
 	return conditionItemInObjectSlotCheck->item == result;
 }
 
+bool AScenarioRunner::ProcessTrigger(UWorld* world, const FTrigger& trigger) {
+	for (const auto& condition : trigger.allOf) {
+		switch (condition->type) {
+		case ConditionTypes::NpcMoodCheck:
+		{
+			const TSharedRef<FCondition_NpcMoodCheck> conditionNpcMoodCheck = StaticCastSharedRef<FCondition_NpcMoodCheck>(condition);
+			const bool result = ProcessNpcMoodCheck(_npcMoodData, conditionNpcMoodCheck);
+			if (!result) {
+				return false;
+			}
+			break;
+		}
+		case ConditionTypes::NpcPositionCheck:
+		{
+			const TSharedRef<FCondition_NpcPositionCheck> conditionNpcPositionCheck = StaticCastSharedRef<FCondition_NpcPositionCheck>(condition);
+			const bool result = ProcessNpcPositionCheck(world, conditionNpcPositionCheck);
+			if (!result) {
+				return false;
+			}
+			break;
+		}
+		case ConditionTypes::ItemInObjectSlotCheck:
+		{
+			const TSharedRef<FCondition_ItemInObjectSlotCheck> conditionItemInObjectSlotCheck = StaticCastSharedRef<FCondition_ItemInObjectSlotCheck>(condition);
+			const bool result = ProcessItemInObjectSlotCheck(world, conditionItemInObjectSlotCheck);
+			if (!result) {
+				return false;
+			}
+			break;
+		}
+		}
+	}
+	return true;
+}
+
 void AScenarioRunner::ProcessTriggers(UWorld* world, const FScenarioData& scenarioData) {
 	for (const auto& trigger : scenarioData.triggers) {
-		const bool previousTriggerState = _triggerState[trigger.Key];
-		bool triggerFired = true;
-		for (const auto& condition : trigger.Value.allOf) {
-			switch (condition->type) {
-			case ConditionTypes::NpcMoodCheck:
-			{
-				const TSharedRef<FCondition_NpcMoodCheck> conditionNpcMoodCheck = StaticCastSharedRef<FCondition_NpcMoodCheck>(condition);
-				const bool result = ProcessNpcMoodCheck(_npcMoodData, conditionNpcMoodCheck);
-				if (!result) {
-					triggerFired = false;
-				}
-				break;
-			}
-			case ConditionTypes::NpcPositionCheck:
-			{
-				const TSharedRef<FCondition_NpcPositionCheck> conditionNpcPositionCheck = StaticCastSharedRef<FCondition_NpcPositionCheck>(condition);
-				const bool result = ProcessNpcPositionCheck(world, conditionNpcPositionCheck);
-				if (!result) {
-					triggerFired = false;
-				}
-				break;
-			}
-			case ConditionTypes::ItemInObjectSlotCheck:
-			{
-				const TSharedRef<FCondition_ItemInObjectSlotCheck> conditionItemInObjectSlotCheck = StaticCastSharedRef<FCondition_ItemInObjectSlotCheck>(condition);
-				const bool result = ProcessItemInObjectSlotCheck(world, conditionItemInObjectSlotCheck);
-				if (!result) {
-					triggerFired = false;
-				}
-				break;
-			}
-			}
-
-			if (!triggerFired) {
-				break;
-			}
+		if (!trigger.Value.alwaysEvaluate) {
+			// This trigger is not continuouslly evaluated and should only be evaluated by direct calls ProcessTrigger.
+			continue;
 		}
+		const bool previousTriggerState = _triggerState[trigger.Key];
+		const bool triggerFired = ProcessTrigger(world, trigger.Value);
 		if (!previousTriggerState && triggerFired) {
 			UE_LOG(LogTemp, Warning, TEXT("Trigger fired"));
 			for (const auto& action : trigger.Value.actions) {
@@ -287,6 +291,16 @@ void AScenarioRunner::ProcessNpcBindings(UWorld* world, const FScenarioData& sce
 			}
 		}
 		break;
+		case TaskTypes::EvaluateTrigger:
+		{
+			const TSharedRef<FTask_EvaluateTrigger> taskEvaluateTrigger = StaticCastSharedRef<FTask_EvaluateTrigger>(task);
+			const FString triggerName = taskEvaluateTrigger->trigger;
+			const auto triggerData = scenarioData.triggers[triggerName];
+			const bool triggerPassed = ProcessTrigger(world, triggerData);
+			const FString action = triggerPassed ? taskEvaluateTrigger->pass_action : taskEvaluateTrigger->fail_action;
+			ProcessAction(world, scenarioData, action , world->GetTimeSeconds());
+			break;
+		}
 		case TaskTypes::ExecuteAction:
 		{
 			const TSharedRef<FTask_ExecuteAction> taskExecuteAction = StaticCastSharedRef<FTask_ExecuteAction>(task);

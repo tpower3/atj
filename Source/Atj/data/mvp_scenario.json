@@ -41,6 +41,7 @@
     "triggers": [
         {
             "name": "critical_moment_check_1",
+            "always_evaluate": true,
             "all_of": [
                 {
                     "type": "npc_mood_check",

@@ -78,6 +78,9 @@ struct FTrigger
 
 	UPROPERTY(BlueprintReadWrite)
 		TArray<FString> actions;
+
+	UPROPERTY(BlueprintReadWrite)
+		bool alwaysEvaluate;
 };
 
 UENUM()
@@ -159,6 +162,7 @@ struct FAction
 UENUM()
 enum TaskTypes {
 	Behavior UMETA(DisplayName = "Behavior"),
+	EvaluateTrigger UMETA(DisplayName = "EvaluateTrigger"),
 	ExecuteAction UMETA(DisplayName = "ExecuteAction")
 };
 
@@ -184,6 +188,21 @@ struct FTask_Behavior : public FTask
 
 	UPROPERTY(BlueprintReadWrite)
 		FString target;
+};
+
+USTRUCT(BlueprintType)
+struct FTask_EvaluateTrigger : public FTask
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+		FString trigger;
+
+	UPROPERTY(BlueprintReadWrite)
+		FString pass_action;
+
+	UPROPERTY(BlueprintReadWrite)
+		FString fail_action;
 };
 
 USTRUCT(BlueprintType)
