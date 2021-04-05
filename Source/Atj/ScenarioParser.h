@@ -69,6 +69,18 @@ struct FCondition_ItemInObjectSlotCheck : public FCondition
 };
 
 USTRUCT(BlueprintType)
+struct FItemData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+		FString name;
+
+	UPROPERTY(BlueprintReadWrite)
+		FString initialObject;
+};
+
+USTRUCT(BlueprintType)
 struct FTrigger
 {
 	GENERATED_USTRUCT_BODY()
@@ -232,6 +244,9 @@ struct FScenarioData
 
 	UPROPERTY(BlueprintReadWrite)
 		TArray<FString> npcs;
+
+	UPROPERTY(BlueprintReadWrite)
+		TMap<FString, FItemData> items;
 
 	UPROPERTY(BlueprintReadWrite)
 		TArray<FString> objects;

@@ -160,6 +160,23 @@ void AScenarioParser::ParseScenario()
 			scenarioData.objects.Add(object);
 		};
 
+		// Parse items
+		TArray<TSharedPtr<FJsonValue>> items = JsonObject->GetArrayField("items");
+		for (const auto item : items)
+		{
+			auto itemObject = item->AsObject();
+			FString itemName = itemObject->GetStringField("name");
+			UE_LOG(LogTemp, Warning, TEXT("DEBUG Item: %s"), *(itemName));
+
+			FItemData fItemData;
+
+			fItemData.name = itemName;
+			fItemData.initialObject = itemObject->GetStringField("initial_object");
+
+			// Add data to struct
+			scenarioData.items.Add(itemName, fItemData);
+		};
+
 		// Parse triggers
 		TArray<TSharedPtr<FJsonValue>> triggers = JsonObject->GetArrayField("triggers");
 		for (const auto trigger : triggers)
