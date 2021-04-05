@@ -30,13 +30,34 @@
         "copier_1"
     ],
     "items": [
-        "crossword_puzzle_1",
-        "big_meeting_agenda_1",
-        "meeting_food_1",
-        "hacky_sack_1",
-        "zaks_breakfast_1",
-        "saras_coffee_cup_1",
-        "hacky_sack_club_flyer_1"
+        {
+            "name": "crossword_puzzle_1",
+            "initial_object": "reception_desk_1"
+        },
+        {
+            "name": "big_meeting_agenda_1",
+            "initial_object": "printer_1"
+        },
+        {
+            "name": "meeting_food_1",
+            "initial_object": "meeting_room_table_1"
+        },
+        {
+            "name": "hacky_sack_1",
+            "initial_object": "meeting_room_chair_3"
+        },
+        {
+            "name": "zaks_breakfast_1",
+            "initial_object": "zaks_desk_1"
+        },
+        {
+            "name": "saras_coffee_cup_1",
+            "initial_object": "saras_desk_1"
+        },
+        {
+            "name": "hacky_sack_club_flyer_1",
+            "initial_object": "ladys_bathroom_toilet_1"
+        }
     ],
     "triggers": [
         {

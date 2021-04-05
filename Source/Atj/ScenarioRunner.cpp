@@ -394,6 +394,28 @@ void AScenarioRunner::ProcessAction(UWorld* world, const FScenarioData& scenario
 	}
 }
 
+static void InitItems(UWorld* world, const TMap<FString, FItemData>& items) {
+	ANpcCharacter* npc = FindNpcCharacter(world, "player");
+	if (!npc) {
+		UE_LOG(LogTemp, Error, TEXT("Npc does not exist: %s"), *("player"));
+		return;
+	}
+	for (const auto& itemData : items) {
+		AItemActor* item = FindItemActor(world, itemData.Value.name);
+		if (!item) {
+			UE_LOG(LogTemp, Error, TEXT("Item does not exist: %s"), *(itemData.Value.name));
+			continue;
+		}
+		AObjectActor* object = FindObjectActor(world, itemData.Value.initialObject);
+		if (!object) {
+			UE_LOG(LogTemp, Error, TEXT("Object does not exist: %s"), *(itemData.Value.initialObject));
+			continue;
+		}
+		npc->PickUp(item);
+		npc->PutDown(object);
+	}
+}
+
 void AScenarioRunner::SetScenarioData(const FScenarioData& data) {
 	_scenarioData = data;
 	constexpr int DEFAULT_MOOD_VALUE = 3;
@@ -403,6 +425,7 @@ void AScenarioRunner::SetScenarioData(const FScenarioData& data) {
 	for (const auto& trigger : _scenarioData.GetValue().triggers) {
 		_triggerState.Add(trigger.Key, false);
 	}
+	InitItems(GetWorld(), _scenarioData.GetValue().items);
 	if (data.actions.Contains("simulation_start")) {
 		ProcessAction(GetWorld(), data, "simulation_start", GetWorld()->GetTimeSeconds());
 	}
