@@ -48,7 +48,7 @@
         },
         {
             "name": "zaks_breakfast_1",
-            "initial_object": "zaks_desk_1"
+            "initial_object": "refrigerator_1"
         },
         {
             "name": "saras_coffee_cup_1",
@@ -56,7 +56,7 @@
         },
         {
             "name": "hacky_sack_club_flyer_1",
-            "initial_object": "ladys_bathroom_toilet_1"
+            "initial_object": "zaks_desk_1"
         }
     ],
     "triggers": [
