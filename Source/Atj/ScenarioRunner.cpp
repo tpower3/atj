@@ -161,45 +161,49 @@ static bool ProcessItemInObjectSlotCheck(UWorld* world, const TSharedRef<FCondit
 	return conditionItemInObjectSlotCheck->item == result;
 }
 
+bool AScenarioRunner::ProcessTrigger(UWorld* world, const FTrigger& trigger) {
+	for (const auto& condition : trigger.allOf) {
+		switch (condition->type) {
+		case ConditionTypes::NpcMoodCheck:
+		{
+			const TSharedRef<FCondition_NpcMoodCheck> conditionNpcMoodCheck = StaticCastSharedRef<FCondition_NpcMoodCheck>(condition);
+			const bool result = ProcessNpcMoodCheck(_npcMoodData, conditionNpcMoodCheck);
+			if (!result) {
+				return false;
+			}
+			break;
+		}
+		case ConditionTypes::NpcPositionCheck:
+		{
+			const TSharedRef<FCondition_NpcPositionCheck> conditionNpcPositionCheck = StaticCastSharedRef<FCondition_NpcPositionCheck>(condition);
+			const bool result = ProcessNpcPositionCheck(world, conditionNpcPositionCheck);
+			if (!result) {
+				return false;
+			}
+			break;
+		}
+		case ConditionTypes::ItemInObjectSlotCheck:
+		{
+			const TSharedRef<FCondition_ItemInObjectSlotCheck> conditionItemInObjectSlotCheck = StaticCastSharedRef<FCondition_ItemInObjectSlotCheck>(condition);
+			const bool result = ProcessItemInObjectSlotCheck(world, conditionItemInObjectSlotCheck);
+			if (!result) {
+				return false;
+			}
+			break;
+		}
+		}
+	}
+	return true;
+}
+
 void AScenarioRunner::ProcessTriggers(UWorld* world, const FScenarioData& scenarioData) {
 	for (const auto& trigger : scenarioData.triggers) {
-		const bool previousTriggerState = _triggerState[trigger.Key];
-		bool triggerFired = true;
-		for (const auto& condition : trigger.Value.allOf) {
-			switch (condition->type) {
-			case ConditionTypes::NpcMoodCheck:
-			{
-				const TSharedRef<FCondition_NpcMoodCheck> conditionNpcMoodCheck = StaticCastSharedRef<FCondition_NpcMoodCheck>(condition);
-				const bool result = ProcessNpcMoodCheck(_npcMoodData, conditionNpcMoodCheck);
-				if (!result) {
-					triggerFired = false;
-				}
-				break;
-			}
-			case ConditionTypes::NpcPositionCheck:
-			{
-				const TSharedRef<FCondition_NpcPositionCheck> conditionNpcPositionCheck = StaticCastSharedRef<FCondition_NpcPositionCheck>(condition);
-				const bool result = ProcessNpcPositionCheck(world, conditionNpcPositionCheck);
-				if (!result) {
-					triggerFired = false;
-				}
-				break;
-			}
-			case ConditionTypes::ItemInObjectSlotCheck:
-			{
-				const TSharedRef<FCondition_ItemInObjectSlotCheck> conditionItemInObjectSlotCheck = StaticCastSharedRef<FCondition_ItemInObjectSlotCheck>(condition);
-				const bool result = ProcessItemInObjectSlotCheck(world, conditionItemInObjectSlotCheck);
-				if (!result) {
-					triggerFired = false;
-				}
-				break;
-			}
-			}
-
-			if (!triggerFired) {
-				break;
-			}
+		if (!trigger.Value.alwaysEvaluate) {
+			// This trigger is not continuouslly evaluated and should only be evaluated by direct calls ProcessTrigger.
+			continue;
 		}
+		const bool previousTriggerState = _triggerState[trigger.Key];
+		const bool triggerFired = ProcessTrigger(world, trigger.Value);
 		if (!previousTriggerState && triggerFired) {
 			UE_LOG(LogTemp, Warning, TEXT("Trigger fired"));
 			for (const auto& action : trigger.Value.actions) {
@@ -211,94 +215,121 @@ void AScenarioRunner::ProcessTriggers(UWorld* world, const FScenarioData& scenar
 	}
 }
 
-void AScenarioRunner::ProcessNpcBindings(UWorld* world, const FScenarioData& scenarioData, const TMap<FString, FNpcBindingData>& npcBindings, float currentTime) {
-	for (const auto& npcBinding : npcBindings) {
+static int GetCurrentTaskIdx(const FRoutine& routine, float previousTickGameTime, float startTime) {
+	int currentTaskIdx = 0;
+	float accumulatedSyncTime = 0.0;
+	for (const auto& task : routine.tasks) {
+		float syncTime;
+		FDefaultValueHelper::ParseFloat(task->sync_time, syncTime);
+		accumulatedSyncTime += syncTime;
+		if ((previousTickGameTime - startTime) <= accumulatedSyncTime) {
+			break;
+		}
+		++currentTaskIdx;
+	}
+	return currentTaskIdx;
+}
+
+void AScenarioRunner::ProcessNpcBindings(UWorld* world, const FScenarioData& scenarioData, TMap<FString, FNpcBindingData>& npcBindings, float currentTime) {
+	for (auto& npcBinding : npcBindings) {
 		const auto& npcName = npcBinding.Key;
-		const auto& npcBindingData = npcBinding.Value;
+		auto& npcBindingData = npcBinding.Value;
 		const FRoutine& routine = scenarioData.routines[npcBindingData.routineName];
 		float startTime = npcBindingData.startTime;
 
 		// Get sync time of current task
-		int currentTaskIdx = 0;
-		float accumulatedSyncTime = 0.0;
-		for (const auto& task : routine.tasks) {
-			float syncTime;
-			FDefaultValueHelper::ParseFloat(task->sync_time, syncTime);
-			if (syncTime == 0.0) {
-				UE_LOG(LogTemp, Error, TEXT("Npc `%s` with routine `%s` has task with SyncTime of 0.0. This is unsupported."), *npcName, *npcBindingData.routineName);
-			}
-			accumulatedSyncTime += syncTime;
-			if ((_previousTickGameTime - startTime) <= accumulatedSyncTime) {
-				break;
-			}
-			++currentTaskIdx;
-		}
-
+		int currentTaskIdx = GetCurrentTaskIdx(routine, _previousTickGameTime, startTime);
 		if (currentTaskIdx >= routine.tasks.Num()) {
 			continue;
 		}
+		if (currentTaskIdx == npcBindingData.currentTaskIdx) {
+			// NPC is already processing the current index. Nothing to complete.
+			continue;
+		}
+
+		npcBindingData.currentTaskIdx = currentTaskIdx;
 		const auto& task = routine.tasks[currentTaskIdx];
+		switch (task->type) {
+		case TaskTypes::Behavior:
+		{
+			const TSharedRef<FTask_Behavior> taskBehavior = StaticCastSharedRef<FTask_Behavior>(task);
+			const auto behavior = taskBehavior->behavior;
 
-		const bool isPastTaskSyncTime = (currentTime > (startTime + accumulatedSyncTime));
-		const bool isPreviousTickBeforeSyncTime = ((_previousTickGameTime <= (startTime + accumulatedSyncTime)));
+			ANpcCharacter* npcCharacter = FindNpcCharacter(world, npcName);
+			if (!npcCharacter) {
+				UE_LOG(LogTemp, Error, TEXT("Npc does not exist: %s"), *(npcName));
+				continue;
+			}
 
-		if (isPreviousTickBeforeSyncTime && isPastTaskSyncTime) {
-			// This task is ready to be executed
-			// This method is not purly deterministic since the time between ticks can vary, and
-			// the task is only executed on a frame.
+			if (behavior == "move_to") {
+				const auto targetName = taskBehavior->target;
 
-			switch (task->type) {
-			case TaskTypes::Behavior:
-			{
-				const TSharedRef<FTask_Behavior> taskBehavior = StaticCastSharedRef<FTask_Behavior>(task);
-				const auto behavior = taskBehavior->behavior;
-
-				ANpcCharacter* npcCharacter = FindNpcCharacter(world, npcName);
-				if (!npcCharacter) {
-					UE_LOG(LogTemp, Error, TEXT("Npc does not exist: %s"), *(npcName));
+				AObjectActor* targetActor = FindObjectActor(world, targetName);
+				if (!targetActor) {
+					UE_LOG(LogTemp, Error, TEXT("Failed '%s' 'move_to'. %s does not exist."), *(npcName), *(targetName));
 					continue;
 				}
-
-				if (behavior == "move_to") {
-					const auto targetName = taskBehavior->target;
-
-					AObjectActor* targetActor = FindObjectActor(world, targetName);
-					if (!targetActor) {
-						UE_LOG(LogTemp, Error, TEXT("Failed '%s' 'move_to'. %s does not exist."), *(npcName), *(targetName));
-						continue;
-					}
-					npcCharacter->RoutineMoveTo(targetActor);
-				}
-				else if (behavior == "pick_up") {
-					const auto targetName = taskBehavior->target;
-					AItemActor* targetActor = FindItemActor(world, targetName);
-					if (!targetActor) {
-						UE_LOG(LogTemp, Error, TEXT("Failed '%s' 'pick_up'. %s does not exist."), *(npcName), *(targetName));
-						continue;
-					}
-					npcCharacter->PickUp(targetActor);
-				}
-				else if (behavior == "put_down") {
-					const auto targetName = taskBehavior->target;
-					AObjectActor* targetActor = FindObjectActor(world, targetName);
-					if (!targetActor) {
-						UE_LOG(LogTemp, Error, TEXT("Failed '%s' 'put_down'. %s does not exist."), *(npcName), *(targetName));
-						continue;
-					}
-					npcCharacter->PutDown(targetActor);
-				}
+				npcCharacter->RoutineMoveTo(targetActor);
 			}
+			else if (behavior == "pick_up") {
+				const auto targetName = taskBehavior->target;
+				AItemActor* targetActor = FindItemActor(world, targetName);
+				if (!targetActor) {
+					UE_LOG(LogTemp, Error, TEXT("Failed '%s' 'pick_up'. %s does not exist."), *(npcName), *(targetName));
+					continue;
+				}
+				npcCharacter->PickUp(targetActor);
+			}
+			else if (behavior == "put_down") {
+				const auto targetName = taskBehavior->target;
+				AObjectActor* targetActor = FindObjectActor(world, targetName);
+				if (!targetActor) {
+					UE_LOG(LogTemp, Error, TEXT("Failed '%s' 'put_down'. %s does not exist."), *(npcName), *(targetName));
+					continue;
+				}
+				npcCharacter->PutDown(targetActor);
+			}
+		}
+		break;
+		case TaskTypes::EvaluateTrigger:
+		{
+			const TSharedRef<FTask_EvaluateTrigger> taskEvaluateTrigger = StaticCastSharedRef<FTask_EvaluateTrigger>(task);
+			const FString triggerName = taskEvaluateTrigger->trigger;
+			const auto triggerData = scenarioData.triggers[triggerName];
+			const bool triggerPassed = ProcessTrigger(world, triggerData);
+			const FString action = triggerPassed ? taskEvaluateTrigger->pass_action : taskEvaluateTrigger->fail_action;
+			ProcessAction(world, scenarioData, action , world->GetTimeSeconds());
 			break;
-			case TaskTypes::ExecuteAction:
-			{
-				const TSharedRef<FTask_ExecuteAction> taskExecuteAction = StaticCastSharedRef<FTask_ExecuteAction>(task);
-				ProcessAction(world, scenarioData, taskExecuteAction->action, world->GetTimeSeconds());
-				break;
-			}
-			}
+		}
+		case TaskTypes::ExecuteAction:
+		{
+			const TSharedRef<FTask_ExecuteAction> taskExecuteAction = StaticCastSharedRef<FTask_ExecuteAction>(task);
+			ProcessAction(world, scenarioData, taskExecuteAction->action, world->GetTimeSeconds());
+			break;
+		}
 		}
 	}
 	_previousTickGameTime = currentTime;
+}
+
+static FString GetTaskDataDebugString(const TSharedRef<FTask> task) {
+	switch (task->type) {
+	case TaskTypes::Behavior:
+	{
+		const TSharedRef<FTask_Behavior> taskBehavior = StaticCastSharedRef<FTask_Behavior>(task);
+		const auto behavior = taskBehavior->behavior;
+		const auto target = taskBehavior->target;
+		return behavior + " " + target;
+	}
+	case TaskTypes::ExecuteAction:
+	{
+		const TSharedRef<FTask_ExecuteAction> taskExecuteAction = StaticCastSharedRef<FTask_ExecuteAction>(task);
+		const auto action = taskExecuteAction->action;
+		return action;
+	}
+	default:
+		return "Undefined SignalType";
+	}
 }
 
 void AScenarioRunner::ProcessAction(UWorld* world, const FScenarioData& scenarioData, FString actionName, float startTime) {
@@ -363,6 +394,28 @@ void AScenarioRunner::ProcessAction(UWorld* world, const FScenarioData& scenario
 	}
 }
 
+static void InitItems(UWorld* world, const TMap<FString, FItemData>& items) {
+	ANpcCharacter* npc = FindNpcCharacter(world, "player");
+	if (!npc) {
+		UE_LOG(LogTemp, Error, TEXT("Npc does not exist: %s"), *("player"));
+		return;
+	}
+	for (const auto& itemData : items) {
+		AItemActor* item = FindItemActor(world, itemData.Value.name);
+		if (!item) {
+			UE_LOG(LogTemp, Error, TEXT("Item does not exist: %s"), *(itemData.Value.name));
+			continue;
+		}
+		AObjectActor* object = FindObjectActor(world, itemData.Value.initialObject);
+		if (!object) {
+			UE_LOG(LogTemp, Error, TEXT("Object does not exist: %s"), *(itemData.Value.initialObject));
+			continue;
+		}
+		npc->PickUp(item);
+		npc->PutDown(object);
+	}
+}
+
 void AScenarioRunner::SetScenarioData(const FScenarioData& data) {
 	_scenarioData = data;
 	constexpr int DEFAULT_MOOD_VALUE = 3;
@@ -372,6 +425,7 @@ void AScenarioRunner::SetScenarioData(const FScenarioData& data) {
 	for (const auto& trigger : _scenarioData.GetValue().triggers) {
 		_triggerState.Add(trigger.Key, false);
 	}
+	InitItems(GetWorld(), _scenarioData.GetValue().items);
 	if (data.actions.Contains("simulation_start")) {
 		ProcessAction(GetWorld(), data, "simulation_start", GetWorld()->GetTimeSeconds());
 	}
@@ -384,6 +438,14 @@ FDebugInfo AScenarioRunner::getDebugInfo() const {
 		FDebugNpcData debugNpcData;
 		debugNpcData.npcName = npcBindingData.Key;
 		debugNpcData.routineName = npcBindingData.Value.routineName;
+
+		const auto currentTaskIdx = npcBindingData.Value.currentTaskIdx;
+		const auto tasks = _scenarioData->routines[npcBindingData.Value.routineName].tasks;
+		if (currentTaskIdx < tasks.Num() && currentTaskIdx >= 0) {
+			debugNpcData.taskData = GetTaskDataDebugString(tasks[currentTaskIdx]);
+		} else {
+			debugNpcData.taskData = "Invalid task";
+		}
 		debugNpcData.routineStartTime = npcBindingData.Value.startTime;
 		debugNpcData.currentTime = GetWorld()->GetTimeSeconds();
 

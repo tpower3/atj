@@ -69,6 +69,18 @@ struct FCondition_ItemInObjectSlotCheck : public FCondition
 };
 
 USTRUCT(BlueprintType)
+struct FItemData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+		FString name;
+
+	UPROPERTY(BlueprintReadWrite)
+		FString initialObject;
+};
+
+USTRUCT(BlueprintType)
 struct FTrigger
 {
 	GENERATED_USTRUCT_BODY()
@@ -78,6 +90,9 @@ struct FTrigger
 
 	UPROPERTY(BlueprintReadWrite)
 		TArray<FString> actions;
+
+	UPROPERTY(BlueprintReadWrite)
+		bool alwaysEvaluate;
 };
 
 UENUM()
@@ -159,6 +174,7 @@ struct FAction
 UENUM()
 enum TaskTypes {
 	Behavior UMETA(DisplayName = "Behavior"),
+	EvaluateTrigger UMETA(DisplayName = "EvaluateTrigger"),
 	ExecuteAction UMETA(DisplayName = "ExecuteAction")
 };
 
@@ -184,6 +200,21 @@ struct FTask_Behavior : public FTask
 
 	UPROPERTY(BlueprintReadWrite)
 		FString target;
+};
+
+USTRUCT(BlueprintType)
+struct FTask_EvaluateTrigger : public FTask
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+		FString trigger;
+
+	UPROPERTY(BlueprintReadWrite)
+		FString pass_action;
+
+	UPROPERTY(BlueprintReadWrite)
+		FString fail_action;
 };
 
 USTRUCT(BlueprintType)
@@ -213,6 +244,9 @@ struct FScenarioData
 
 	UPROPERTY(BlueprintReadWrite)
 		TArray<FString> npcs;
+
+	UPROPERTY(BlueprintReadWrite)
+		TMap<FString, FItemData> items;
 
 	UPROPERTY(BlueprintReadWrite)
 		TArray<FString> objects;
