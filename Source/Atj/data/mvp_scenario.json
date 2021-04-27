@@ -173,6 +173,17 @@
                     "object": "refrigerator_1"
                 }
             ]
+        },
+        {
+            "name": "crossword_puzzle_1_in_reception_desk_1_slot_check",
+            "always_evaluate": false,
+            "all_of": [
+                {
+                    "type": "item_in_object_slot_check",
+                    "item": "crossword_puzzle_1",
+                    "object": "reception_desk_1"
+                }
+            ]
         }
     ],
     "actions": [
