@@ -140,6 +140,34 @@
             "actions": [
                 "end_game_failure_action"
             ]
+        },
+        {
+            "name": "big_meeting_agenda_1_in_printer_1_slot_check",
+            "always_evaluate": false,
+            "all_of": [
+                {
+                    "type": "item_in_object_slot_check",
+                    "item": "big_meeting_agenda_1",
+                    "object": "printer_1"
+                }
+            ],
+            "actions": [
+                "end_game_failure_action"
+            ]
+        },
+        {
+            "name": "meeting_food_1_in_meeting_room_table_1_slot_check",
+            "always_evaluate": false,
+            "all_of": [
+                {
+                    "type": "item_in_object_slot_check",
+                    "item": "meeting_food_1",
+                    "object": "meeting_room_table_1"
+                }
+            ],
+            "actions": [
+                "end_game_failure_action"
+            ]
         }
     ],
     "actions": [
@@ -189,12 +217,42 @@
             ]
         },
         {
-            "name": "bind_juan_to_refrigerator_1_routine_action",
+            "name": "bind_juan_to_printer_1_big_meeting_agenda_1_true_routine_action",
             "signals": [
                 {
                     "type": "bind_npc",
                     "npc": "juan",
-                    "routine": "refrigerator_1_routine"
+                    "routine": "printer_1_big_meeting_agenda_1_true_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_juan_to_juan_double_decrement_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "juan",
+                    "routine": "juan_double_decrement_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_juan_to_meeting_room_table_1_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "juan",
+                    "routine": "meeting_room_table_1_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_juan_to_meeting_food_1_in_meeting_room_table_1_true_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "juan",
+                    "routine": "meeting_food_1_in_meeting_room_table_1_true_routine"
                 }
             ]
         },
@@ -485,6 +543,18 @@
                     "target": "printer_1"
                 },
                 {
+                    "type": "evaluate_trigger",
+                    "sync_time": "0.1",
+                    "trigger": "big_meeting_agenda_1_in_printer_1_slot_check",
+                    "pass_action": "bind_juan_to_printer_1_big_meeting_agenda_1_true_routine_action",
+                    "fail_action": "bind_juan_to_juan_double_decrement_mood_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "printer_1_big_meeting_agenda_1_true_routine",
+            "tasks": [
+                {
                     "type": "behavior",
                     "sync_time": "10.0",
                     "behavior": "pick_up",
@@ -505,25 +575,13 @@
                 {
                     "type": "execute_action",
                     "sync_time": "0.1",
-                    "action": "bind_juan_to_refrigerator_1_routine_action"
+                    "action": "bind_juan_to_meeting_room_table_1_routine_action"
                 }
             ]
         },
-        {
-            "name": "refrigerator_1_routine",
+                {
+            "name": "juan_double_decrement_mood_routine",
             "tasks": [
-                {
-                    "type": "behavior",
-                    "sync_time": "0.1",
-                    "behavior": "move_to",
-                    "target": "refrigerator_1"
-                },
-                {
-                    "type": "behavior",
-                    "sync_time": "20.0",
-                    "behavior": "pick_up",
-                    "target": "meeting_food_1"
-                },
                 {
                     "type": "execute_action",
                     "sync_time": "0.1",
@@ -531,9 +589,48 @@
                 },
                 {
                     "type": "execute_action",
-                    "sync_time": "20.0",
-                    "action": "bind_juan_to_meeting_room_routine_action"
+                    "sync_time": "0.1",
+                    "action": "decrement_mood_juan_action"
                 }
+            ]
+        },
+        {
+            "name": "meeting_room_table_1_routine",
+            "tasks": [
+                {
+                    "type": "behavior",
+                    "sync_time": "0.1",
+                    "behavior": "move_to",
+                    "target": "meeting_room_table_1"
+                },
+                {
+                    "type": "evaluate_trigger",
+                    "sync_time": "0.1",
+                    "trigger": "meeting_food_1_in_meeting_room_table_1_slot_check",
+                    "pass_action": "bind_juan_to_meeting_food_1_in_meeting_room_table_1_true_routine_action",
+                    "fail_action": "bind_juan_to_juan_double_decrement_mood_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "meeting_food_1_in_meeting_room_table_1_true_routine",
+            "tasks": [
+            {
+                "type": "behavior",
+                "sync_time": "20.0",
+                "behavior": "pick_up",
+                "target": "meeting_food_1"
+            },
+            {
+                "type": "execute_action",
+                "sync_time": "0.1",
+                "action": "decrement_mood_juan_action"
+            },
+            {
+                "type": "execute_action",
+                "sync_time": "20.0",
+                "action": "bind_juan_to_meeting_room_routine_action"
+            }
             ]
         },
         {
