@@ -140,6 +140,50 @@
             "actions": [
                 "end_game_failure_action"
             ]
+        },
+        {
+            "name": "big_meeting_agenda_1_in_printer_1_slot_check",
+            "always_evaluate": false,
+            "all_of": [
+                {
+                    "type": "item_in_object_slot_check",
+                    "item": "big_meeting_agenda_1",
+                    "object": "printer_1"
+                }
+            ]
+        },
+        {
+            "name": "meeting_food_1_in_meeting_room_table_1_slot_check",
+            "always_evaluate": false,
+            "all_of": [
+                {
+                    "type": "item_in_object_slot_check",
+                    "item": "meeting_food_1",
+                    "object": "meeting_room_table_1"
+                }
+            ]
+        },
+        {
+            "name": "zaks_breakfast_1_in_refrigerator_1_slot_check",
+            "always_evaluate": false,
+            "all_of": [
+                {
+                    "type": "item_in_object_slot_check",
+                    "item": "zaks_breakfast_1",
+                    "object": "refrigerator_1"
+                }
+            ]
+        },
+        {
+            "name": "crossword_puzzle_1_in_reception_desk_1_slot_check",
+            "always_evaluate": false,
+            "all_of": [
+                {
+                    "type": "item_in_object_slot_check",
+                    "item": "crossword_puzzle_1",
+                    "object": "reception_desk_1"
+                }
+            ]
         }
     ],
     "actions": [
@@ -189,12 +233,42 @@
             ]
         },
         {
-            "name": "bind_juan_to_refrigerator_1_routine_action",
+            "name": "bind_juan_to_printer_1_big_meeting_agenda_1_true_routine_action",
             "signals": [
                 {
                     "type": "bind_npc",
                     "npc": "juan",
-                    "routine": "refrigerator_1_routine"
+                    "routine": "printer_1_big_meeting_agenda_1_true_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_juan_to_juan_double_decrement_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "juan",
+                    "routine": "juan_double_decrement_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_juan_to_meeting_room_table_1_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "juan",
+                    "routine": "meeting_room_table_1_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_juan_to_meeting_food_1_in_meeting_room_table_1_true_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "juan",
+                    "routine": "meeting_food_1_in_meeting_room_table_1_true_routine"
                 }
             ]
         },
@@ -225,6 +299,46 @@
                     "type": "bind_npc",
                     "npc": "zak",
                     "routine": "zaks_desk_1_breakfast_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_zak_to_zaks_breakfast_1_in_refrigerator_1_true_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "zak",
+                    "routine": "zaks_breakfast_1_in_refrigerator_1_true_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_zak_to_zaks_breakfast_1_in_refrigerator_1_false_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "zak",
+                    "routine": "zaks_breakfast_1_in_refrigerator_1_false_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_zak_to_crossword_puzzle_1_in_reception_desk_1_true_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "zak",
+                    "routine": "crossword_puzzle_1_in_reception_desk_1_true_routine"
+                }
+            ]
+        },
+        {
+            "name": "bind_zak_to_zak_double_decrement_routine_action",
+            "signals": [
+                {
+                    "type": "bind_npc",
+                    "npc": "zak",
+                    "routine": "zak_double_decrement_routine"
                 }
             ]
         },
@@ -485,6 +599,18 @@
                     "target": "printer_1"
                 },
                 {
+                    "type": "evaluate_trigger",
+                    "sync_time": "0.1",
+                    "trigger": "big_meeting_agenda_1_in_printer_1_slot_check",
+                    "pass_action": "bind_juan_to_printer_1_big_meeting_agenda_1_true_routine_action",
+                    "fail_action": "bind_juan_to_juan_double_decrement_mood_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "printer_1_big_meeting_agenda_1_true_routine",
+            "tasks": [
+                {
                     "type": "behavior",
                     "sync_time": "10.0",
                     "behavior": "pick_up",
@@ -505,19 +631,46 @@
                 {
                     "type": "execute_action",
                     "sync_time": "0.1",
-                    "action": "bind_juan_to_refrigerator_1_routine_action"
+                    "action": "bind_juan_to_meeting_room_table_1_routine_action"
                 }
             ]
         },
         {
-            "name": "refrigerator_1_routine",
+            "name": "juan_double_decrement_mood_routine",
+            "tasks": [
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.1",
+                    "action": "decrement_mood_juan_action"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.1",
+                    "action": "decrement_mood_juan_action"
+                }
+            ]
+        },
+        {
+            "name": "meeting_room_table_1_routine",
             "tasks": [
                 {
                     "type": "behavior",
                     "sync_time": "0.1",
                     "behavior": "move_to",
-                    "target": "refrigerator_1"
+                    "target": "meeting_room_table_1"
                 },
+                {
+                    "type": "evaluate_trigger",
+                    "sync_time": "0.1",
+                    "trigger": "meeting_food_1_in_meeting_room_table_1_slot_check",
+                    "pass_action": "bind_juan_to_meeting_food_1_in_meeting_room_table_1_true_routine_action",
+                    "fail_action": "bind_juan_to_juan_double_decrement_mood_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "meeting_food_1_in_meeting_room_table_1_true_routine",
+            "tasks": [
                 {
                     "type": "behavior",
                     "sync_time": "20.0",
@@ -614,6 +767,18 @@
                     "target": "refrigerator_1"
                 },
                 {
+                    "type": "evaluate_trigger",
+                    "sync_time": "0.1",
+                    "trigger": "zaks_breakfast_1_in_refrigerator_1_slot_check",
+                    "pass_action": "bind_zak_to_zaks_breakfast_1_in_refrigerator_1_true_routine_action",
+                    "fail_action": "bind_zak_to_zaks_breakfast_1_in_refrigerator_1_false_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "zaks_breakfast_1_in_refrigerator_1_true_routine",
+            "tasks": [
+                {
                     "type": "behavior",
                     "sync_time": "20.0",
                     "behavior": "pick_up",
@@ -638,6 +803,16 @@
                 {
                     "type": "execute_action",
                     "sync_time": "30.0",
+                    "action": "bind_zak_to_zaks_desk_1_breakfast_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "zaks_breakfast_1_in_refrigerator_1_false_routine",
+            "tasks": [
+                {
+                    "type": "execute_action",
+                    "sync_time": "50.3",
                     "action": "bind_zak_to_zaks_desk_1_breakfast_routine_action"
                 }
             ]
@@ -695,6 +870,18 @@
                     "target": "reception_desk_1"
                 },
                 {
+                    "type": "evaluate_trigger",
+                    "sync_time": "0.1",
+                    "trigger": "crossword_puzzle_1_in_reception_desk_1_slot_check",
+                    "pass_action": "bind_zak_to_crossword_puzzle_1_in_reception_desk_1_true_routine_action",
+                    "fail_action": "bind_zak_to_zak_double_decrement_routine_action"
+                }
+            ]
+        },
+        {
+            "name": "crossword_puzzle_1_in_reception_desk_1_true_routine",
+            "tasks": [
+                {
                     "type": "behavior",
                     "sync_time": "10.0",
                     "behavior": "pick_up",
@@ -709,6 +896,21 @@
                 {
                     "type": "execute_action",
                     "sync_time": "20.0",
+                    "action": "decrement_mood_zak_action"
+                }
+            ]
+        },
+        {
+            "name": "zak_double_decrement_routine",
+            "tasks": [
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.1",
+                    "action": "decrement_mood_zak_action"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.1",
                     "action": "decrement_mood_zak_action"
                 }
             ]
