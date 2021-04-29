@@ -863,6 +863,11 @@
                     "sync_time": "40.0",
                     "behavior": "move_to",
                     "target": "meeting_room_chair_1"
+                },
+                {
+                    "type": "execute_action",
+                    "sync_time": "0.1",
+                    "action": "end_game_success_action"
                 }
             ]
         },
