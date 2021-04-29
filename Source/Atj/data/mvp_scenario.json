@@ -649,13 +649,13 @@
                     "type": "behavior",
                     "sync_time": "0.1",
                     "behavior": "move_to",
-                    "target": "zaks_desk_1"
+                    "target": "break_room_table_1"
                 },
                 {
                     "type": "behavior",
                     "sync_time": "30.0",
                     "behavior": "put_down",
-                    "target": "zaks_desk_1"
+                    "target": "break_room_table_1"
                 },
                 {
                     "type": "execute_action",
