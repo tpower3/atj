@@ -917,6 +917,30 @@
                     "type": "behavior",
                     "sync_time": "0.1",
                     "behavior": "move_to",
+                    "target": "bulletin_board_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "5.0",
+                    "behavior": "pick_up",
+                    "target": "big_meeting_agenda_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "0.1",
+                    "behavior": "move_to",
+                    "target": "printer_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "5.0",
+                    "behavior": "put_down",
+                    "target": "printer_1"
+                },
+                {
+                    "type": "behavior",
+                    "sync_time": "0.1",
+                    "behavior": "move_to",
                     "target": "zaks_desk_1"
                 },
                 {
@@ -927,7 +951,7 @@
                 },
                 {
                     "type": "execute_action",
-                    "sync_time": "30.0",
+                    "sync_time": "19.8",
                     "action": "bind_player_to_debug_player_move_to_copier_1_routine_action"
                 }
             ]
